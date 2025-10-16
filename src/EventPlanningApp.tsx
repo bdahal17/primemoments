@@ -70,9 +70,9 @@ export default function EventPlanningApp() {
   ];
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="bg-white">
       {/* Navigation */}
-      <nav className={`fixed w-full z-50 transition-all duration-300 ${scrolled ? 'bg-white shadow-md py-4' : 'bg-transparent py-6'}`}>
+      <nav className={`fixed w-full z-50 transition-all duration-300 ${scrolled ? 'bg-white shadow-md py-4' : 'bg-gradient-to-r from-rose-500 via-purple-500 to-indigo-600 py-6'}`}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center">
             <div className="flex items-center space-x-2">
@@ -111,7 +111,7 @@ export default function EventPlanningApp() {
 
         {/* Mobile Menu */}
         {isMenuOpen && (
-          <div className="md:hidden bg-white shadow-lg">
+          <div className="md:hidden bg-white shadow-lg absolute top-full left-0 right-0">
             <div className="px-4 pt-2 pb-4 space-y-2">
               {['Home', 'Services', 'About', 'Gallery', 'Contact'].map((item) => (
                 <a
@@ -129,12 +129,12 @@ export default function EventPlanningApp() {
       </nav>
 
       {/* Hero Section */}
-      <section className="relative h-screen flex items-center justify-center overflow-hidden">
+      <section className="relative h-screen flex items-center justify-center">
         <div className="absolute inset-0 bg-gradient-to-br from-rose-500 via-purple-500 to-indigo-600">
           <div className="absolute inset-0 bg-black opacity-40"></div>
         </div>
         
-        <div className="relative z-10 text-center px-4 max-w-5xl mx-auto">
+        <div className="relative z-10 text-center px-4 w-full max-w-5xl mx-auto">
           <h1 className="text-5xl md:text-7xl font-bold text-white mb-6 leading-tight">
             Creating Unforgettable
             <span className="block mt-2 bg-gradient-to-r from-rose-200 to-purple-200 bg-clip-text text-transparent">
