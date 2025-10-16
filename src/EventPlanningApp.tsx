@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { Calendar, MapPin, Heart, Sparkles, ChevronRight, Menu, X, Star, CheckCircle } from 'lucide-react';
 
 export default function EventPlanningApp() {
@@ -81,7 +81,7 @@ export default function EventPlanningApp() {
                 Elegance Events
               </span>
             </div>
-            
+
             <div className="hidden md:flex space-x-8">
               {['Home', 'Services', 'About', 'Gallery', 'Contact'].map((item) => (
                 <a
@@ -133,7 +133,7 @@ export default function EventPlanningApp() {
         <div className="absolute inset-0 bg-gradient-to-br from-rose-500 via-purple-500 to-indigo-600">
           <div className="absolute inset-0 bg-black opacity-40"></div>
         </div>
-        
+
         <div className="relative z-10 text-center px-4 w-full max-w-5xl mx-auto">
           <h1 className="text-5xl md:text-7xl font-bold text-white mb-6 leading-tight">
             Creating Unforgettable
@@ -214,7 +214,7 @@ export default function EventPlanningApp() {
                 ))}
               </div>
             </div>
-            
+
             <div className="relative">
               <div className="aspect-square rounded-3xl bg-gradient-to-br from-rose-400 via-purple-400 to-indigo-400 shadow-2xl transform rotate-3 hover:rotate-0 transition-transform duration-500"></div>
               <div className="absolute inset-4 rounded-3xl bg-white shadow-xl flex items-center justify-center">
@@ -286,7 +286,7 @@ export default function EventPlanningApp() {
           <div className="absolute top-0 left-0 w-96 h-96 bg-white rounded-full -translate-x-1/2 -translate-y-1/2"></div>
           <div className="absolute bottom-0 right-0 w-96 h-96 bg-white rounded-full translate-x-1/2 translate-y-1/2"></div>
         </div>
-        
+
         <div className="max-w-4xl mx-auto text-center relative z-10">
           <h2 className="text-4xl md:text-5xl font-bold text-white mb-6">
             Ready to Start Planning?
@@ -314,7 +314,7 @@ export default function EventPlanningApp() {
                 Creating unforgettable moments since 2013
               </p>
             </div>
-            
+
             <div>
               <h4 className="font-bold mb-4">Services</h4>
               <ul className="space-y-2 text-gray-400">
@@ -323,7 +323,7 @@ export default function EventPlanningApp() {
                 <li><a href="#" className="hover:text-rose-400">Special Occasions</a></li>
               </ul>
             </div>
-            
+
             <div>
               <h4 className="font-bold mb-4">Company</h4>
               <ul className="space-y-2 text-gray-400">
@@ -332,7 +332,7 @@ export default function EventPlanningApp() {
                 <li><a href="#" className="hover:text-rose-400">Testimonials</a></li>
               </ul>
             </div>
-            
+
             <div>
               <h4 className="font-bold mb-4">Contact</h4>
               <ul className="space-y-2 text-gray-400">
@@ -345,7 +345,7 @@ export default function EventPlanningApp() {
               </ul>
             </div>
           </div>
-          
+
           <div className="border-t border-gray-800 pt-8 text-center text-gray-400">
             <p>&copy; 2025 Elegance Events. All rights reserved.</p>
           </div>
