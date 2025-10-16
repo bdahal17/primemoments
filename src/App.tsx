@@ -1,11 +1,7 @@
-import './App.css'
+import EventPlanningApp from './EventPlanningApp'
 
 function App() {
-
-  return (
-    <>
-    </>
-  )
+  return <EventPlanningApp />
 }
 
 export default App
