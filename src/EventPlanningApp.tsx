@@ -1,5 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { Calendar, MapPin, Heart, Sparkles, ChevronRight, Menu, X, Star, CheckCircle, Mail, Phone, User, MessageSquare, DollarSign, Users } from 'lucide-react';
+import emailjs from '@emailjs/browser';
+
+// EmailJS Configuration - Replace with your own credentials
+const EMAILJS_PUBLIC_KEY = import.meta.env.VITE_EMAILJS_PUBLIC_KEY;
+const EMAILJS_SERVICE_ID = import.meta.env.VITE_EMAILJS_SERVICE_ID;
+const EMAILJS_CONTACT_TEMPLATE_ID = import.meta.env.VITE_EMAILJS_CONTACT_TEMPLATE_ID;
+const EMAILJS_PLANNING_TEMPLATE_ID = import.meta.env.VITE_EMAILJS_PLANNING_TEMPLATE_ID;
 
 interface ModalProps {
   isOpen: boolean;
@@ -7,7 +14,11 @@ interface ModalProps {
   children: React.ReactNode;
   title: string;
 }
-
+console.log("EMAILJS_PUBLIC_KEY:", import.meta.env.VITE_EMAILJS_PUBLIC_KEY);
+console.log("Service ID:", import.meta.env.VITE_EMAILJS_SERVICE_ID);
+emailjs.init({
+  publicKey: import.meta.env.VITE_EMAILJS_PUBLIC_KEY
+});
 const Modal: React.FC<ModalProps> = ({ isOpen, onClose, children, title }) => {
   if (!isOpen) return null;
 
@@ -171,38 +182,78 @@ export default function EventPlanningApp() {
 
   const handleContactSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    console.log('Contact form submitted:', contactFormData);
+    // Send email via EmailJS
+    emailjs
+  .send(
+    EMAILJS_SERVICE_ID,
+    EMAILJS_CONTACT_TEMPLATE_ID,
+    {
+      from_name: contactFormData.name,
+      from_email: contactFormData.email,
+      phone: contactFormData.phone,
+      message: contactFormData.message,
+    }
+  )
+  .then((response) => {
+    console.log("Email sent successfully!", response.status, response.text);
     setContactFormSubmitted(true);
     setTimeout(() => {
       setShowContactModal(false);
       setContactFormSubmitted(false);
       setContactFormData({
-        name: '',
-        email: '',
-        phone: '',
-        message: ''
+        name: "",
+        email: "",
+        phone: "",
+        message: "",
       });
     }, 2000);
-  };
+  })
+  .catch((error) => {
+    console.error("Failed to send email:", error);
+    alert("Failed to send message. Please try again.");
+  });}
 
   const handlePlanningSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    console.log('Planning form submitted:', planningFormData);
-    setPlanningFormSubmitted(true);
-    setTimeout(() => {
-      setShowPlanningModal(false);
-      setPlanningFormSubmitted(false);
-      setPlanningFormData({
-        name: '',
-        email: '',
-        phone: '',
-        eventType: '',
-        eventDate: '',
-        guestCount: '',
-        budget: '',
-        message: ''
-      });
-    }, 2000);
+    
+    // Send email via EmailJS
+    emailjs.send(
+      EMAILJS_SERVICE_ID,
+      EMAILJS_PLANNING_TEMPLATE_ID,
+      {
+        from_name: planningFormData.name,
+        from_email: planningFormData.email,
+        phone: planningFormData.phone,
+        event_type: planningFormData.eventType,
+        event_date: planningFormData.eventDate,
+        guest_count: planningFormData.guestCount,
+        budget: planningFormData.budget,
+        message: planningFormData.message,
+      },
+      EMAILJS_PUBLIC_KEY
+    )
+    .then((response) => {
+      console.log('Email sent successfully!', response.status, response.text);
+      setPlanningFormSubmitted(true);
+      setTimeout(() => {
+        setShowPlanningModal(false);
+        setPlanningFormSubmitted(false);
+        setPlanningFormData({
+          name: '',
+          email: '',
+          phone: '',
+          eventType: '',
+          eventDate: '',
+          guestCount: '',
+          budget: '',
+          message: ''
+        });
+      }, 2000);
+    })
+    .catch((error) => {
+      console.error('Failed to send email:', error);
+      alert('Failed to send request. Please try again.');
+    });
   };
 
   return (
