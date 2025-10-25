@@ -23,7 +23,6 @@ jobs:
           java-version: '21'
 
       - name: Build (Gradle)
-        working-directory: /
         run: ./gradlew clean :backend:bootJar
 
       - name: Configure AWS Credentials (static keys)
