@@ -1,0 +1,46 @@
+plugins {
+    id 'base'                                   // gives you the 'clean' task
+    id 'com.github.node-gradle.node' version '3.5.1'
+}
+
+import com.github.gradle.node.npm.task.NpmTask
+
+node {
+    version = '18.17.0'
+    npmVersion = '9.6.7'
+    download = true
+    // nodeProjectDir = file('.')               // default is projectDir; set explicitly if needed
+}
+
+// Use npm ci instead of install (more deterministic, faster in CI)
+tasks.named('npmInstall') {
+    args = ['ci']
+}
+
+// Vite outputs to 'dist' by default (change to 'build' if CRA)
+def outDir = file('dist')
+
+tasks.register('buildReact', NpmTask) {
+    dependsOn tasks.npmInstall
+    args = ['run', 'build']
+
+    // Good incremental build inputs:
+    inputs.files('package.json', 'package-lock.json')
+    inputs.dir('src')
+    inputs.file('vite.config.ts') // remove if not present
+
+    outputs.dir(outDir)
+}
+
+// Make `gradlew assemble` also build the frontend
+tasks.named('assemble') {
+    dependsOn tasks.named('buildReact')
+}
+
+// Clean using a proper Delete task and wire it to main clean
+tasks.register('cleanFrontend', Delete) {
+    delete outDir, 'node_modules', 'npm-debug.log'
+}
+tasks.named('clean') {
+    dependsOn tasks.named('cleanFrontend')
+}
