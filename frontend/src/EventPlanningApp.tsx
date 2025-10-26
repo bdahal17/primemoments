@@ -1,6 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { Calendar, MapPin, Heart, Sparkles, ChevronRight, Menu, X, Star, CheckCircle, Mail, Phone, User, MessageSquare, DollarSign, Users } from 'lucide-react';
 import emailjs from '@emailjs/browser';
+import Navigation from "./components/NavBar/Navigation.tsx";
+import {useNavigate} from "react-router-dom";
+import {useSelector} from "react-redux";
+import NavBar from "./components/NavBar/NavBar.tsx";
+import HeroSection from "./components/HeroSection/HeroSection.tsx";
 
 // EmailJS Configuration - Replace with your own credentials
 const EMAILJS_PUBLIC_KEY = import.meta.env.VITE_EMAILJS_PUBLIC_KEY;
@@ -42,13 +47,21 @@ const Modal: React.FC<ModalProps> = ({ isOpen, onClose, children, title }) => {
   );
 };
 
-export default function EventPlanningApp() {
+const EventPlanningApp: React.FC = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [activeTestimonial, setActiveTestimonial] = useState(0);
   const [showContactModal, setShowContactModal] = useState(false);
   const [showGalleryModal, setShowGalleryModal] = useState(false);
   const [showPlanningModal, setShowPlanningModal] = useState(false);
+
+  const navigate = useNavigate();
+  const user = useSelector((state) => state.user.isAuthenticated)
+
+  React.useEffect(() => {
+    console.log('user...', user)
+  }, [user]);
+
   const [contactFormData, setContactFormData] = useState({
     name: '',
     email: '',
@@ -215,7 +228,7 @@ export default function EventPlanningApp() {
 
   const handlePlanningSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    
+
     // Send email via EmailJS
     emailjs.send(
       EMAILJS_SERVICE_ID,
@@ -259,115 +272,9 @@ export default function EventPlanningApp() {
   return (
     <div className="bg-white">
       {/* Navigation */}
-      <nav className={`fixed w-full z-50 transition-all duration-300 ${scrolled ? 'bg-white shadow-md py-4' : 'bg-gradient-to-r from-rose-500 via-purple-500 to-indigo-600 py-6'}`}>
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center">
-            <div className="flex items-center space-x-2">
-              <Sparkles className={`h-8 w-8 ${scrolled ? 'text-rose-500' : 'text-white'}`} />
-              <span className={`text-2xl font-bold ${scrolled ? 'text-gray-900' : 'text-white'}`}>
-                Elegance Events
-              </span>
-            </div>
-
-            <div className="hidden md:flex space-x-8">
-              {['Home', 'Services', 'About', 'Gallery', 'Contact'].map((item) => (
-                <a
-                  key={item}
-                  href={`#${item.toLowerCase()}`}
-                  className={`font-medium transition-colors ${
-                    scrolled ? 'text-gray-700 hover:text-rose-500' : 'text-white hover:text-rose-200'
-                  }`}
-                  onClick={(e) => {
-                    if (item === 'Gallery') {
-                      e.preventDefault();
-                      setShowGalleryModal(true);
-                    } else if (item === 'Contact') {
-                      e.preventDefault();
-                      setShowContactModal(true);
-                    }
-                  }}
-                >
-                  {item}
-                </a>
-              ))}
-            </div>
-
-            <button
-              className="md:hidden"
-              onClick={() => setIsMenuOpen(!isMenuOpen)}
-            >
-              {isMenuOpen ? (
-                <X className={scrolled ? 'text-gray-900' : 'text-white'} />
-              ) : (
-                <Menu className={scrolled ? 'text-gray-900' : 'text-white'} />
-              )}
-            </button>
-          </div>
-        </div>
-
-        {/* Mobile Menu */}
-        {isMenuOpen && (
-          <div className="md:hidden bg-white shadow-lg absolute top-full left-0 right-0">
-            <div className="px-4 pt-2 pb-4 space-y-2">
-              {['Home', 'Services', 'About', 'Gallery', 'Contact'].map((item) => (
-                <a
-                  key={item}
-                  href={`#${item.toLowerCase()}`}
-                  className="block py-2 text-gray-700 hover:text-rose-500"
-                  onClick={(e) => {
-                    setIsMenuOpen(false);
-                    if (item === 'Gallery') {
-                      e.preventDefault();
-                      setShowGalleryModal(true);
-                    } else if (item === 'Contact') {
-                      e.preventDefault();
-                      setShowContactModal(true);
-                    }
-                  }}
-                >
-                  {item}
-                </a>
-              ))}
-            </div>
-          </div>
-        )}
-      </nav>
-
+      <NavBar scrolled={scrolled} setShowContactModal={setShowContactModal} setShowGalleryModal={setShowGalleryModal} setIsMenuOpen={setIsMenuOpen} isMenuOpen={isMenuOpen}/>
       {/* Hero Section */}
-      <section className="relative h-screen flex items-center justify-center">
-        <div className="absolute inset-0 bg-gradient-to-br from-rose-500 via-purple-500 to-indigo-600">
-          <div className="absolute inset-0 bg-black opacity-40"></div>
-        </div>
-
-        <div className="relative z-10 text-center px-4 w-full max-w-5xl mx-auto">
-          <h1 className="text-5xl md:text-7xl font-bold text-white mb-6 leading-tight">
-            Creating Unforgettable
-            <span className="block mt-2 bg-gradient-to-r from-rose-200 to-purple-200 bg-clip-text text-transparent">
-              Moments That Last
-            </span>
-          </h1>
-          <p className="text-xl md:text-2xl text-white mb-8 opacity-90">
-            From intimate gatherings to grand celebrations, we bring your vision to life
-          </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <button 
-              onClick={() => setShowPlanningModal(true)}
-              className="bg-white text-rose-600 px-8 py-4 rounded-full font-semibold text-lg hover:bg-rose-50 transition-all transform hover:scale-105 shadow-xl"
-            >
-              Start Planning
-              <ChevronRight className="inline ml-2 h-5 w-5" />
-            </button>
-            <button 
-              onClick={() => setShowGalleryModal(true)}
-              className="border-2 border-white text-white px-8 py-4 rounded-full font-semibold text-lg hover:bg-white hover:text-rose-600 transition-all transform hover:scale-105"
-            >
-              View Our Work
-            </button>
-          </div>
-        </div>
-
-        <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-white to-transparent"></div>
-      </section>
+      <HeroSection setShowGalleryModal={setShowGalleryModal} setShowPlanningModal={setShowPlanningModal}/>
 
       {/* Services Section */}
       <section className="py-24 px-4 bg-white">
@@ -505,7 +412,7 @@ export default function EventPlanningApp() {
           <p className="text-xl text-white opacity-90 mb-8">
             Let's create something extraordinary together. Contact us today for a free consultation.
           </p>
-          <button 
+          <button
             onClick={() => setShowContactModal(true)}
             className="bg-white text-rose-600 px-10 py-5 rounded-full font-bold text-lg hover:bg-rose-50 transition-all transform hover:scale-105 shadow-2xl"
           >
@@ -543,8 +450,8 @@ export default function EventPlanningApp() {
               <ul className="space-y-2 text-gray-400">
                 <li><a href="#" className="hover:text-rose-400">About Us</a></li>
                 <li>
-                  <button 
-                    onClick={() => setShowGalleryModal(true)} 
+                  <button
+                    onClick={() => setShowGalleryModal(true)}
                     className="hover:text-rose-400"
                   >
                     Gallery
@@ -574,8 +481,8 @@ export default function EventPlanningApp() {
       </footer>
 
       {/* Contact Modal */}
-      <Modal 
-        isOpen={showContactModal} 
+      <Modal
+        isOpen={showContactModal}
         onClose={() => setShowContactModal(false)}
         title="Get In Touch"
       >
@@ -673,8 +580,8 @@ export default function EventPlanningApp() {
       </Modal>
 
       {/* Gallery Modal */}
-      <Modal 
-        isOpen={showGalleryModal} 
+      <Modal
+        isOpen={showGalleryModal}
         onClose={() => setShowGalleryModal(false)}
         title="Our Work"
       >
@@ -693,8 +600,8 @@ export default function EventPlanningApp() {
       </Modal>
 
       {/* Planning Modal */}
-      <Modal 
-        isOpen={showPlanningModal} 
+      <Modal
+        isOpen={showPlanningModal}
         onClose={() => setShowPlanningModal(false)}
         title="Start Planning Your Event"
       >
@@ -857,3 +764,4 @@ export default function EventPlanningApp() {
     </div>
   );
 }
+export default EventPlanningApp;
