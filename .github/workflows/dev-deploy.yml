@@ -74,7 +74,7 @@ jobs:
         env:
           IMAGE_URI: ${{ steps.login-ecr.outputs.registry }}/${{ env.ECR_REPOSITORY }}:${{ env.IMAGE_TAG }}
           APP_NAME: primemoments-app
-          ENV_NAME: dev
+          ENV_NAME: dev-env
           ECR_IMAGE: ${{ steps.login-ecr.outputs.registry }}/${{ env.ECR_REPOSITORY }}:${{ env.IMAGE_TAG }}
           EB_S3_BUCKET: primemoments-app-ebs3bucket
         run: |
