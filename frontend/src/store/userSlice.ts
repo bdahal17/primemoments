@@ -1,8 +1,15 @@
 import {createSlice} from "@reduxjs/toolkit";
 
+interface RootState {
+  user: {
+    isAuthenticated: boolean;
+    name: string;
+  };
+}
+
 export const userSlice = createSlice({
   name: 'user',
-  initialState: {
+  initialState: <RootState['user']>{
     isAuthenticated: false,
     userInfo: null,
   },
