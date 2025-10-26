@@ -69,3 +69,37 @@ jobs:
         run: |
           docker build -t $REGISTRY/$REPOSITORY:$IMAGE_TAG -f backend/Dockerfile backend
           docker push $REGISTRY/$REPOSITORY:$IMAGE_TAG
+
+      - name: Generate Dockerrun.aws.json
+        env:
+          IMAGE_URI: ${{ steps.login-ecr.outputs.registry }}/${{ env.ECR_REPOSITORY }}:${{ env.IMAGE_TAG }}
+          APP_NAME: primemoments-app
+          ENV_NAME: dev
+          ECR_IMAGE: ${{ steps.login-ecr.outputs.registry }}/${{ env.ECR_REPOSITORY }}:${{ env.IMAGE_TAG }}
+          EB_S3_BUCKET: primemoments-app-ebs3bucket
+        run: |
+          echo '{
+            "AWSEBDockerrunVersion": "1",
+            "Image": {
+              "Name": "'"$IMAGE_URI"'",
+              "Update": "true"
+            },
+            "Ports": [
+              {
+                "ContainerPort": "8080"
+              }
+            ]
+          }' > Dockerrun.aws.json
+          
+          aws s3 cp Dockerrun.aws.json s3://$EB_S3_BUCKET/Dockerrun.aws.json
+          
+          VERSION_LABEL="v-${GITHUB_SHA}"
+          aws elasticbeanstalk create-application-version \
+          --application-name $APP_NAME \
+          --version-label $VERSION_LABEL \
+          --source-bundle S3Bucket=$EB_S3_BUCKET,S3Key=Dockerrun.aws.json
+          
+          aws elasticbeanstalk update-environment \
+          --environment-name $ENV_NAME \
+          --version-label $VERSION_LABEL
+
