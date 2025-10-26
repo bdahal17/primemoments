@@ -23,7 +23,7 @@ variable "app_name" {
 
 variable "env_name" {
   type    = string
-  default = "dev"
+  default = "dev-env"
 }
 
 variable "instance_type" {
