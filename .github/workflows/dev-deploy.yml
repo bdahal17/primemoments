@@ -37,7 +37,7 @@ jobs:
       - name: Setup Terraform CLI
         uses: hashicorp/setup-terraform@v2
         with:
-          terraform_version: 1.5.0
+          terraform_version: 1.6.0
 
       - name: Terraform Init (with backend config)
         working-directory: terraform
