@@ -8,7 +8,7 @@ resource "aws_elastic_beanstalk_environment" "dev" {
   application = aws_elastic_beanstalk_application.primemoments-app.name
 
   # Must match an available solution stack in your region
-  solution_stack_name = "64bit Amazon Linux 2 v3.7.13 running Docker"
+  solution_stack_name = "64bit Amazon Linux 2023 v4.7.2 running Docker"
 
   setting {
     namespace = "aws:autoscaling:launchconfiguration"
