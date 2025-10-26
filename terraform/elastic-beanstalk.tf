@@ -13,7 +13,7 @@ resource "aws_elastic_beanstalk_environment" "dev" {
   setting {
     namespace = "aws:autoscaling:launchconfiguration"
     name      = "InstanceType"
-    value     = "t3.medium"
+    value     = "t3.nano"  # smallest instance type
   }
 }
 
