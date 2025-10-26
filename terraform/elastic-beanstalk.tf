@@ -4,15 +4,19 @@ resource "aws_elastic_beanstalk_application" "primemoments-app" {
 }
 
 resource "aws_elastic_beanstalk_environment" "dev" {
-  name                = var.env_name
-  application         = aws_elastic_beanstalk_application.primemoments-app.name
+  name        = var.env_name
+  application = aws_elastic_beanstalk_application.primemoments-app.name
+
+  # Must match an available solution stack in your region
+  solution_stack_name = "64bit Amazon Linux 2 v3.7.13 running Docker"
 
   setting {
     namespace = "aws:autoscaling:launchconfiguration"
     name      = "InstanceType"
-    value     = var.instance_type
+    value     = "t3.medium"
   }
 }
+
 
 
 variable "app_name" {
