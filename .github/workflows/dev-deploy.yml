@@ -57,22 +57,15 @@ jobs:
         run: |
           terraform apply -auto-approve tfplan
 
-#      - name: Login to Amazon ECR
-#        id: login-ecr
-#        uses: aws-actions/amazon-ecr-login@v2
-#
-#      - name: Build, tag, and push Docker image to ECR
-#        env:
-#          REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-#          REPOSITORY: ${{ env.ECR_REPOSITORY }}
-#          IMAGE_TAG: ${{ env.IMAGE_TAG }}
-#        run: |
-#          # Copy the JAR to backend/build/libs (if not already there)
-#          ls -al backend/build/libs
-#          cp backend/build/libs/*.jar backend/app.jar
-#
-#          # Build Docker image
-#          docker build -t $REGISTRY/$REPOSITORY:$IMAGE_TAG -f backend/Dockerfile backend
-#
-#          # Push image to ECR
-#          docker push $REGISTRY/$REPOSITORY:$IMAGE_TAG
+      - name: Login to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v2
+
+      - name: Build, tag, and push Docker image to ECR
+        env:
+          REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+          REPOSITORY: ${{ env.ECR_REPOSITORY }}
+          IMAGE_TAG: ${{ env.IMAGE_TAG }}
+        run: |
+          docker build -t $REGISTRY/$REPOSITORY:$IMAGE_TAG -f backend/Dockerfile backend
+          docker push $REGISTRY/$REPOSITORY:$IMAGE_TAG
