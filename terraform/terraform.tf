@@ -12,7 +12,7 @@ terraform {
     bucket         = "amzn-primemoments-state-bucket"       # replace with your S3 bucket
     key            = "envs/dev/terraform.tfstate" # path inside the bucket
     region         = "us-east-2"                  # AWS region
-    dynamodb_table = var.lock_table_name        # optional, for locking
+    dynamodb_table = "tf-locks"     # optional, for locking
     encrypt        = true
   }
 }
@@ -20,11 +20,6 @@ terraform {
 variable "region" {
   type    = string
   default = "us-east-2"
-}
-
-variable "lock_table_name" {
-  type    = string
-  default = "tf-locks"
 }
 
 #resource "aws_s3_bucket" "tf_state" {
