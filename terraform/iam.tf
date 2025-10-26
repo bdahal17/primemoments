@@ -27,3 +27,8 @@ resource "aws_iam_role_policy_attachment" "eb_managed_policy_worker" {
   role       = aws_iam_role.eb_instance_role.name
   policy_arn = "arn:aws:iam::aws:policy/AWSElasticBeanstalkWorkerTier"
 }
+
+resource "aws_iam_role_policy_attachment" "eb_ecr_access" {
+  role       = aws_iam_role.eb_instance_role.name
+  policy_arn = "arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly"
+}
