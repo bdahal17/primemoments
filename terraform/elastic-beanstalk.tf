@@ -40,6 +40,12 @@ resource "aws_elastic_beanstalk_environment" "dev" {
     value     = aws_iam_instance_profile.eb_instance_profile.name
   }
 
+  setting {
+    namespace = "aws:elasticbeanstalk:environment"
+    name      = "EnvironmentType"
+    value     = "SingleInstance"
+  }
+
   depends_on = [aws_iam_instance_profile.eb_instance_profile]
 }
 
