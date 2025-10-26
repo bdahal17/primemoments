@@ -1,3 +1,21 @@
+variable "app_name" {
+  type    = string
+  default = "primemoments-app"
+}
+
+variable "env_name" {
+  type    = string
+  default = "dev-env"
+}
+
+variable "instance_type" {
+  default     = "t2.small"
+}
+
+variable "solution_stack" {
+  default     = "64bit Amazon Linux 2 v3.7.10 running Corretto 21"
+}
+
 resource "aws_elastic_beanstalk_application" "primemoments-app" {
   name        = var.app_name
   description = "Elastic Beanstalk Application for PrimeMoments"
@@ -15,26 +33,14 @@ resource "aws_elastic_beanstalk_environment" "dev" {
     name      = "InstanceType"
     value     = "t3.nano"  # smallest instance type
   }
-}
 
+  setting {
+    namespace = "aws:autoscaling:launchconfiguration"
+    name      = "IamInstanceProfile"
+    value     = aws_iam_instance_profile.eb_instance_profile.name
+  }
 
-
-variable "app_name" {
-  type    = string
-  default = "primemoments-app"
-}
-
-variable "env_name" {
-  type    = string
-  default = "dev-env"
-}
-
-variable "instance_type" {
-  default     = "t2.small"
-}
-
-variable "solution_stack" {
-  default     = "64bit Amazon Linux 2 v3.7.10 running Corretto 21"
+  depends_on = [aws_iam_instance_profile.eb_instance_profile]
 }
 
 #resource "aws_elastic_beanstalk_application_version" "app_version" {
