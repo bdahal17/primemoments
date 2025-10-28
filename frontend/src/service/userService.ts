@@ -1,13 +1,22 @@
+
 const BASE_URL = import.meta.env.VITE_API_BASE_URL || "http://localhost:8080/api";
 
 export interface LoginPayload {
-    username: string;
+    email: string;
     password: string;
 }
 
-export interface User {
+export interface RegisterPayload {
+    firstName: string;
+    lastName: string;
+    email: string;
+    password: string;
+}
+
+export interface UserResponse {
     id: number;
-    name: string;
+    firstName: string;
+    lastName: string;
     email: string;
     token: string;
 }
@@ -28,15 +37,23 @@ async function request<T>(url: string, options?: RequestInit): Promise<T> {
 }
 
 // Auth APIs
-export async function userLogin(payload: LoginPayload): Promise<User> {
-    return request<User>("/auth/login", {
+export async function userLogin(payload: LoginPayload): Promise<UserResponse> {
+    return request<UserResponse>("/user/login", {
         method: "POST",
         body: JSON.stringify(payload),
     });
 }
 
-export async function fetchUser(token: string): Promise<User> {
-    return request<User>("/auth/me", {
+// Auth APIs
+export async function userRegister(payload: RegisterPayload): Promise<UserResponse> {
+    return request<UserResponse>("/user/register", {
+        method: "POST",
+        body: JSON.stringify(payload),
+    });
+}
+
+export async function fetchUser(token: string): Promise<UserResponse> {
+    return request<UserResponse>("/auth/me", {
         headers: {
             Authorization: `Bearer ${token}`,
         },

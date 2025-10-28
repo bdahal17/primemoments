@@ -47,13 +47,6 @@ const Modal: React.FC<ModalProps> = ({ isOpen, onClose, children, title }) => {
   );
 };
 
-interface RootState {
-  user: {
-    isAuthenticated: boolean;
-    name: string;
-  };
-}
-
 const EventPlanningApp: React.FC = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
@@ -63,7 +56,7 @@ const EventPlanningApp: React.FC = () => {
   const [showPlanningModal, setShowPlanningModal] = useState(false);
 
   const navigate = useNavigate();
-  const user = useSelector((state: RootState) => state.user.isAuthenticated)
+  const user = useSelector((state: any) => state.user.isAuthenticated)
 
   React.useEffect(() => {
     console.log('user...', user)

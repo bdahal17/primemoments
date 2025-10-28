@@ -1,17 +1,11 @@
 import {createSlice} from "@reduxjs/toolkit";
 
-interface RootState {
-  user: {
-    isAuthenticated: boolean;
-    name: string;
-  };
-}
-
 export const userSlice = createSlice({
   name: 'user',
-  initialState: <RootState['user']>{
+  initialState: {
     isAuthenticated: false,
     userInfo: null,
+    isBootstrapping: true,
   },
   reducers: {
     login: (state, action) => {
@@ -22,8 +16,15 @@ export const userSlice = createSlice({
       state.isAuthenticated = false;
       state.userInfo = null;
     },
+    bootstrapUser: (state, action) => {
+      console.log("Bootstrapping user:", action.payload);
+      // Called on app startup if a session token exists
+      state.isAuthenticated = action.payload.isAuthenticated;
+      state.userInfo = action.payload.userInfo;
+      state.isBootstrapping = action.payload.isBootstrapping;
+    },
   },
 });
 
-export const {login, logout} = userSlice.actions;
+export const {login, logout, bootstrapUser} = userSlice.actions;
 export default userSlice.reducer;

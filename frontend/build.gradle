@@ -6,10 +6,9 @@ plugins {
 import com.github.gradle.node.npm.task.NpmTask
 
 node {
-    version = '18.17.0'
+    version = '20.19.0'
     npmVersion = '9.6.7'
     download = true
-    // nodeProjectDir = file('.')               // default is projectDir; set explicitly if needed
 }
 
 // Use npm ci instead of install (more deterministic, faster in CI)
