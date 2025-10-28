@@ -39,7 +39,7 @@ public class SecurityConfig {
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
         // Allow specific origins (replace with your frontend URL, e.g., http://localhost:3000)
-        configuration.setAllowedOrigins(Arrays.asList("http://localhost:5173", "https://your-frontend-domain.com"));
+        configuration.setAllowedOrigins(Arrays.asList("http://localhost:5173", "http://dev-env.eba-fqsm8u3f.us-east-2.elasticbeanstalk.com"));
         // Allow specific HTTP methods
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         // Allow specific headers (e.g., Authorization for JWT tokens)
