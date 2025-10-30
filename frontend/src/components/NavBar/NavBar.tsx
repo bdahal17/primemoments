@@ -4,13 +4,6 @@ import Navigation from "./Navigation.tsx";
 import {useNavigate} from "react-router-dom";
 import React from "react";
 
-// setShowContactModal={setShowContactModal}
-// setShowGalleryModal={setShowGalleryModal}
-// setIsMenuOpen={setIsMenuOpen}
-// setScrolled={setScrolled}
-// scrolled={scrolled}
-// isMenuOpen={isMenuOpen}
-// showGalleryModal={showGalleryModal}
 interface NavBarProps {
     scrolled: boolean;
     setShowGalleryModal: (show: boolean) => void;
