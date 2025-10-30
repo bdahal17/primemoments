@@ -1,10 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { Calendar, MapPin, Heart, Sparkles, ChevronRight, Menu, X, Star, CheckCircle, Mail, Phone, User, MessageSquare, DollarSign, Users } from 'lucide-react';
 import emailjs from '@emailjs/browser';
-import Navigation from "./components/NavBar/Navigation.tsx";
 import {useNavigate} from "react-router-dom";
 import {useSelector} from "react-redux";
-import NavBar from "./components/NavBar/NavBar.tsx";
 import HeroSection from "./components/HeroSection/HeroSection.tsx";
 
 // EmailJS Configuration - Replace with your own credentials
@@ -47,12 +45,25 @@ const Modal: React.FC<ModalProps> = ({ isOpen, onClose, children, title }) => {
   );
 };
 
-const EventPlanningApp: React.FC = () => {
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [scrolled, setScrolled] = useState(false);
+interface EventPlanningAppProps {
+  setShowContactModal: (show: boolean) => void;
+  setShowGalleryModal: (show: boolean) => void;
+  setIsMenuOpen: (open: boolean) => void;
+  setScrolled: (scrolled: boolean) => void;
+  scrolled: boolean;
+  isMenuOpen: boolean;
+  showGalleryModal: boolean;
+  showContactModal: boolean;
+}
+
+const EventPlanningApp: React.FC<EventPlanningAppProps> = ({
+                                      setShowContactModal,
+                                      setShowGalleryModal,
+                                      setScrolled,
+                                      showGalleryModal,
+                                      showContactModal
+                                    }: EventPlanningAppProps) => {
   const [activeTestimonial, setActiveTestimonial] = useState(0);
-  const [showContactModal, setShowContactModal] = useState(false);
-  const [showGalleryModal, setShowGalleryModal] = useState(false);
   const [showPlanningModal, setShowPlanningModal] = useState(false);
 
   const navigate = useNavigate();
@@ -271,9 +282,6 @@ const EventPlanningApp: React.FC = () => {
 
   return (
     <div className="bg-white">
-      {/* Navigation */}
-      <NavBar scrolled={scrolled} setShowContactModal={setShowContactModal} setShowGalleryModal={setShowGalleryModal} setIsMenuOpen={setIsMenuOpen} isMenuOpen={isMenuOpen}/>
-      {/* Hero Section */}
       <HeroSection setShowGalleryModal={setShowGalleryModal} setShowPlanningModal={setShowPlanningModal}/>
 
       {/* Services Section */}

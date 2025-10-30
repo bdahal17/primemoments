@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import React, {useEffect, useState} from "react";
 import emailjs from "@emailjs/browser";
 import EventPlanningApp from "./EventPlanningApp";
 import Login from "./components/Account/Login.tsx";
@@ -8,11 +8,18 @@ import RequireAuth from "./auth/RequireAuth.tsx";
 import {useDispatch, useSelector} from "react-redux";
 import {bootstrapUser, logout} from "./store/userSlice.ts";
 import {fetchUser} from "./service/userService.ts";
+import NavBar from "./components/NavBar/NavBar.tsx";
 
 function App() {
 
     const dispatch = useDispatch();
     const user = useSelector((state: any) => state.user.isAuthenticated)
+    const [scrolled, setScrolled] = useState(false);
+    const [isMenuOpen, setIsMenuOpen] = useState(false);
+    const [showContactModal, setShowContactModal] = useState(false);
+    const [showGalleryModal, setShowGalleryModal] = useState(false);
+
+
 
 
     useEffect(() => {
@@ -46,8 +53,26 @@ function App() {
 
   return (
     <BrowserRouter>
-         <Routes>
-            <Route path="/" element={<EventPlanningApp/>} />
+        <NavBar
+            scrolled={scrolled}
+            setShowContactModal={setShowContactModal}
+            setShowGalleryModal={setShowGalleryModal}
+            setIsMenuOpen={setIsMenuOpen}
+            isMenuOpen={isMenuOpen}
+        />
+        <Routes>
+            <Route path="/" element={
+                <EventPlanningApp
+                    setShowContactModal={setShowContactModal}
+                    setShowGalleryModal={setShowGalleryModal}
+                    setIsMenuOpen={setIsMenuOpen}
+                    setScrolled={setScrolled}
+                    scrolled={scrolled}
+                    isMenuOpen={isMenuOpen}
+                    showGalleryModal={showGalleryModal}
+                    showContactModal={showContactModal}
+                />
+            }/>
             <Route path="/login" element={<Login/>} />
             <Route path="/account" element={
                 <RequireAuth>

@@ -2,35 +2,53 @@ import {useSelector} from "react-redux";
 import {Menu, Sparkles, X} from "lucide-react";
 import Navigation from "./Navigation.tsx";
 import {useNavigate} from "react-router-dom";
+import React from "react";
 
+// setShowContactModal={setShowContactModal}
+// setShowGalleryModal={setShowGalleryModal}
+// setIsMenuOpen={setIsMenuOpen}
+// setScrolled={setScrolled}
+// scrolled={scrolled}
+// isMenuOpen={isMenuOpen}
+// showGalleryModal={showGalleryModal}
 interface NavBarProps {
     scrolled: boolean;
     setShowGalleryModal: (show: boolean) => void;
     setShowContactModal: (show: boolean) => void;
     isMenuOpen: boolean;
     setIsMenuOpen: (open: boolean) => void;
-    user: any;
-    navigate: (path: string) => void;
 }
-const NavBar = ({ scrolled, setShowContactModal, setShowGalleryModal, setIsMenuOpen, isMenuOpen }) => {
+const NavBar: React.FC<NavBarProps> = ({ scrolled, setShowContactModal, setShowGalleryModal, setIsMenuOpen, isMenuOpen }: NavBarProps) => {
 
   const user = useSelector((state: any) => state.user.isAuthenticated);
   const navigate = useNavigate();
   return (
       <nav
-          className={`fixed w-full z-50 transition-all duration-300 ${scrolled ? 'bg-white shadow-md py-4' : 'bg-gradient-to-r from-rose-500 via-purple-500 to-indigo-600 py-6'}`}>
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          style={{
+              position: "fixed",
+              top: 0,
+              left: 0,
+          }}
+          className={`fixed w-full z-50 transition-all duration-300 ${scrolled ? 'bg-white shadow-md py-4' : 'bg-gradient-to-r from-rose-500 via-purple-500 to-indigo-600 py-6'}`}
+      >
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
               <div className="flex justify-between items-center">
-                  <div className="flex items-center space-x-2">
+                  <div
+                      className="flex items-center space-x-2"
+                      onClick={() => navigate('/')}
+                    >
                       <Sparkles className={`h-8 w-8 ${scrolled ? 'text-rose-500' : 'text-white'}`}/>
                       <span className={`text-2xl font-bold ${scrolled ? 'text-gray-900' : 'text-white'}`}>
-                Elegance Events
-              </span>
+                        Elegance Events
+                      </span>
                   </div>
-
-                  <Navigation scrolled={scrolled} setShowContactModal={setShowContactModal}
-                              setShowGalleryModal={setShowGalleryModal}/>
-                  <button
+                  {location.pathname === '/' && (<Navigation
+                      scrolled={scrolled}
+                      setShowContactModal={setShowContactModal}
+                      setShowGalleryModal={setShowGalleryModal}
+                  />
+                  )}
+                  {location.pathname === '/' && (<button
                       className="md:hidden"
                       onClick={() => setIsMenuOpen(!isMenuOpen)}
                   >
@@ -39,8 +57,8 @@ const NavBar = ({ scrolled, setShowContactModal, setShowGalleryModal, setIsMenuO
                       ) : (
                           <Menu className={scrolled ? 'text-gray-900' : 'text-white'}/>
                       )}
-                  </button>
-                  <button
+                  </button>)}
+                  {location.pathname === '/' && (<button
                       onClick={() => {
                           if (!user) {
                               navigate('/login');
@@ -51,6 +69,7 @@ const NavBar = ({ scrolled, setShowContactModal, setShowGalleryModal, setIsMenuO
                   >
                       {user ? ('Account') : ('Login')}
                   </button>
+                  )}
               </div>
           </div>
 
