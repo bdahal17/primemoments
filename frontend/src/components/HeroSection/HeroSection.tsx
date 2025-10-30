@@ -7,7 +7,7 @@ interface HeroSectionProps {
 }
 const HeroSection = ({ setShowGalleryModal, setShowPlanningModal }) => {
     return (
-        <section className="relative h-screen flex items-center justify-center">
+        <section id={"home"} className="relative h-screen flex items-center justify-center">
             <div className="absolute inset-0 bg-gradient-to-br from-rose-500 via-purple-500 to-indigo-600">
                 <div className="absolute inset-0 bg-black opacity-40"></div>
             </div>
