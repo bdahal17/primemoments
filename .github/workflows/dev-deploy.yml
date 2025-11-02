@@ -106,7 +106,7 @@ jobs:
         id: get-rds
         run: |
           DB_ENDPOINT=$(aws rds describe-db-instances \
-            --db-instance-identifier primemoments-development-postgres \
+            --db-instance-identifier ${{ env.APP_NAME }}-${{ env.ENV_NAME }}-postgres \
             --region $AWS_REGION \
             --query 'DBInstances[0].Endpoint.Address' \
             --output text)
