@@ -1,13 +1,11 @@
 variable "project_name" {
   description = "Name of the project"
   type        = string
-  default     = "primemoments"
 }
 
 variable "environment" {
   description = "Environment name"
   type        = string
-  default     = "development"
 }
 
 variable "aws_region" {
