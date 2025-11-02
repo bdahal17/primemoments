@@ -1,0 +1,17 @@
+server:
+  port: 8080
+spring:
+  application:
+    name: backend
+#  liquibase:
+#    enabled: true
+#    change-log: classpath:db/changelog/db.changelog-master.yaml
+#    default-schema: public
+#    drop-first: false
+jwt:
+  secret-arn: ${JWT_SECRET_ARN:}
+
+#  spring.liquibase.enabled=true
+#  spring.liquibase.change-log=classpath:db/changelog/db.changelog-master.yaml
+#  spring.liquibase.default-schema=public
+#  spring.liquibase.drop-first=false

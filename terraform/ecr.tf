@@ -4,6 +4,7 @@ provider "aws" {
 
 resource "aws_ecr_repository" "app_repo" {
   name                 = var.ecr_repo_name
+  force_delete         = true
   image_tag_mutability = "MUTABLE" # or "IMMUTABLE" for stricter control
 
   image_scanning_configuration {
@@ -44,9 +45,4 @@ resource "aws_ecr_lifecycle_policy" "cleanup" {
       }
     ]
   })
-}
-
-variable "environment" {
-  type    = string
-  default = "production"
 }

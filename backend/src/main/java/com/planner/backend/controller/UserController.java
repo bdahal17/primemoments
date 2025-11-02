@@ -2,6 +2,8 @@ package com.planner.backend.controller;
 
 import com.planner.backend.DTO.UserDto;
 import com.planner.backend.DTO.UserResponse;
+import com.planner.backend.config.JWTConfig;
+import com.planner.backend.service.UserService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -10,14 +12,23 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 public class UserController {
 
+    private final JWTConfig jwtConfig;
+    private final UserService userService;
+
+    public UserController(JWTConfig jwtConfig, UserService userService) {
+        this.jwtConfig = jwtConfig;
+        this.userService = userService;
+
+    }
+
     @PostMapping("/login")
     public ResponseEntity<UserResponse> login(String email, String password) {
         try {
-            UserResponse userResponse = new UserResponse();
-            userResponse.setEmail(email);
-            userResponse.setFirstName("John");
-            userResponse.setLastName("Doe");
-            userResponse.setToken("sample-token-123");
+            UserResponse userResponse = userService.authenticateUser(email, password);
+            if(userResponse == null) {
+                return new ResponseEntity<>(null, HttpStatus.UNAUTHORIZED);
+            }
+            userResponse.setToken(jwtConfig.generateToken(email));
             return new ResponseEntity<>(userResponse, HttpStatus.OK);
         } catch (Exception e) {
             e.printStackTrace();
@@ -28,11 +39,11 @@ public class UserController {
     @PostMapping("/register")
     public ResponseEntity<UserResponse> register(@RequestBody UserDto userDto) {
         try {
-            UserResponse userResponse = new UserResponse();
-            userResponse.setEmail(userDto.getEmail());
-            userResponse.setFirstName(userDto.getFirstName());
-            userResponse.setLastName(userDto.getLastName());
-            userResponse.setToken("sample-token-123");
+            if(!userService.isValidUsername(userDto.getEmail())) {
+                return new ResponseEntity<>(null, HttpStatus.CONFLICT);
+            }
+            UserResponse userResponse = userService.saveUser(userDto);
+            userResponse.setToken(jwtConfig.generateToken(userDto.getEmail()));
             return new ResponseEntity<>(userResponse, HttpStatus.OK);
         } catch (Exception e) {
             e.printStackTrace();

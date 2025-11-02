@@ -1,7 +1,13 @@
+resource "aws_secretsmanager_secret" "jwt_secret" {
+  name        = "jwt-secret"
+  description = "JWT secret key used by the backend"
+}
+
 resource "aws_iam_instance_profile" "eb_instance_profile" {
   name = "primemoments-eb-instance-profile"
   role = aws_iam_role.eb_instance_role.name
 }
+
 
 resource "aws_iam_role" "eb_instance_role" {
   name = "primemoments-eb-instance-role"
@@ -31,4 +37,23 @@ resource "aws_iam_role_policy_attachment" "eb_managed_policy_worker" {
 resource "aws_iam_role_policy_attachment" "eb_ecr_access" {
   role       = aws_iam_role.eb_instance_role.name
   policy_arn = "arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly"
+}
+
+resource "aws_iam_role_policy" "allow_secret_read" {
+  name = "allow-read-jwt-secret"
+  role = aws_iam_role.eb_instance_role.id
+
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Effect = "Allow"
+        Action = [
+          "secretsmanager:GetSecretValue",
+          "secretsmanager:DescribeSecret"
+        ]
+        Resource = aws_secretsmanager_secret.jwt_secret.arn
+      }
+    ]
+  })
 }
