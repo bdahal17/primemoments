@@ -130,11 +130,15 @@ jobs:
           --version-label $VERSION_LABEL \
           --source-bundle S3Bucket=$EB_S3_BUCKET,S3Key=Dockerrun.aws.json
           
-          eb setenv JWT_SECRET_ARN="$SECRET_ARN"
-          
           aws elasticbeanstalk update-environment \
+          --application-name $APP_NAME \
           --environment-name $ENV_NAME \
           --version-label $VERSION_LABEL
+          --option-settings \
+            "Namespace=aws:elasticbeanstalk:application:environment,OptionName=JWT_SECRET_ARN,Value=$SECRET_ARN" \
+            "Namespace=aws:elasticbeanstalk:application:environment,OptionName=AWS_REGION,Value=$AWS_REGION" \
+            "Namespace=aws:elasticbeanstalk:application:environment,OptionName=SPRING_PROFILES_ACTIVE,Value=$ENV_NAME" \
+          --region $AWS_REGION
           
 
 
