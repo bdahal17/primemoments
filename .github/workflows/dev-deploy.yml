@@ -15,6 +15,7 @@ jobs:
       IMAGE_TAG: ${{ github.sha }}
       APP_NAME: primemoments-app
       ENV_NAME: development
+      DB_NAME: primemomentsdb
 
     steps:
       - uses: actions/checkout@v4
@@ -101,6 +102,17 @@ jobs:
           docker build -t $REGISTRY/$REPOSITORY:$IMAGE_TAG -f backend/Dockerfile backend
           docker push $REGISTRY/$REPOSITORY:$IMAGE_TAG
 
+      - name: Get RDS Endpoint
+        id: get-rds
+        run: |
+          DB_ENDPOINT=$(aws rds describe-db-instances \
+            --db-instance-identifier primemoments-development-postgres \
+            --region $AWS_REGION \
+            --query 'DBInstances[0].Endpoint.Address' \
+            --output text)
+          echo "DB_ENDPOINT=$DB_ENDPOINT" >> $GITHUB_ENV
+          echo "✅ RDS endpoint: $DB_ENDPOINT"
+
       - name: create Dockerrun.aws.json and deploy to Elastic Beanstalk
         env:
           IMAGE_URI: ${{ steps.login-ecr.outputs.registry }}/${{ env.ECR_REPOSITORY }}:${{ env.IMAGE_TAG }}
@@ -108,6 +120,8 @@ jobs:
           EB_S3_BUCKET: primemoments-app-ebs3bucket
           ENV_NAME: ${{ env.ENV_NAME }}
           APP_NAME: ${{ env.APP_NAME }}
+          DB_NAME: ${{ env.DB_NAME }}
+          DB_ENDPOINT: ${{ env.DB_ENDPOINT }}
         run: |
           echo '{
             "AWSEBDockerrunVersion": "1",
@@ -138,6 +152,10 @@ jobs:
             "Namespace=aws:elasticbeanstalk:application:environment,OptionName=JWT_SECRET_ARN,Value=$SECRET_ARN" \
             "Namespace=aws:elasticbeanstalk:application:environment,OptionName=AWS_REGION,Value=$AWS_REGION" \
             "Namespace=aws:elasticbeanstalk:application:environment,OptionName=SPRING_PROFILES_ACTIVE,Value=$ENV_NAME" \
+            "Namespace=aws:elasticbeanstalk:application:environment,OptionName=DB_HOST,Value=$DB_ENDPOINT" \
+            "Namespace=aws:elasticbeanstalk:application:environment,OptionName=DB_PORT,Value=5432" \
+            "Namespace=aws:elasticbeanstalk:application:environment,OptionName=DB_NAME,Value=$DB_NAME" \
+            "Namespace=aws:elasticbeanstalk:application:environment,OptionName=DB_USERNAME,Value=${{ secrets.DB_USERNAME }}" \
           --region $AWS_REGION
           
 
