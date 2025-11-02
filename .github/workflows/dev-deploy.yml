@@ -130,9 +130,11 @@ jobs:
           --version-label $VERSION_LABEL \
           --source-bundle S3Bucket=$EB_S3_BUCKET,S3Key=Dockerrun.aws.json
           
+          eb setenv JWT_SECRET_ARN="$SECRET_ARN"
+          
           aws elasticbeanstalk update-environment \
           --environment-name $ENV_NAME \
           --version-label $VERSION_LABEL
-          --option-settings Namespace=aws:elasticbeanstalk:application:environment,OptionName=JWT_SECRET_ARN,Value="$SECRET_ARN"
+          
 
 
