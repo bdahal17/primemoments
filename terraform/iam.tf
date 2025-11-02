@@ -1,8 +1,3 @@
-resource "aws_secretsmanager_secret" "jwt_secret" {
-  name        = "jwt-secret"
-  description = "JWT secret key used by the backend"
-}
-
 resource "aws_iam_instance_profile" "eb_instance_profile" {
   name = "primemoments-eb-instance-profile"
   role = aws_iam_role.eb_instance_role.name
@@ -39,6 +34,10 @@ resource "aws_iam_role_policy_attachment" "eb_ecr_access" {
   policy_arn = "arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly"
 }
 
+data "aws_secretsmanager_secret" "jwt_secret" {
+  name = "jwt-secret" # Replace with your actual secret name
+}
+
 resource "aws_iam_role_policy" "allow_secret_read" {
   name = "allow-read-jwt-secret"
   role = aws_iam_role.eb_instance_role.id
@@ -52,7 +51,7 @@ resource "aws_iam_role_policy" "allow_secret_read" {
           "secretsmanager:GetSecretValue",
           "secretsmanager:DescribeSecret"
         ]
-        Resource = aws_secretsmanager_secret.jwt_secret.arn
+        Resource = data.aws_secretsmanager_secret.jwt_secret.arn
       }
     ]
   })
