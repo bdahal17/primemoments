@@ -11,6 +11,7 @@ export const userSlice = createSlice({
     login: (state, action) => {
       state.isAuthenticated = true;
       state.userInfo = action.payload;
+      // state.isBootstrapping = false;
     },
     logout: (state) => {
       state.isAuthenticated = false;

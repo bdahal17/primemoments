@@ -1,15 +1,21 @@
 import React from "react";
 import type {JSX} from "react";
 import {Navigate, useLocation} from "react-router-dom";
-import {useSelector} from "react-redux";
+import {useDispatch, useSelector} from "react-redux";
+import {logout} from "../store/userSlice.ts";
 
 const RequireAuth: React.FC<{ children: JSX.Element }> = ({ children }) => {
     const isAuthenticated = useSelector((state: any) => state.user.isAuthenticated);
     const isBootstrapping = useSelector((state: any) => state.user.isBootstrapping);
     const location = useLocation();
+    const dispatch = useDispatch();
 
-    console.log("RequireAuth: isAuthenticated =", isAuthenticated);
-    console.log("RequireAuth: isBootstrapping =", isBootstrapping);
+    const jwtToken = localStorage.getItem("jwt");
+
+    if(!jwtToken) {
+        dispatch(logout());
+        return <Navigate to="/login" state={{ from: location }} replace />;
+    }
 
     // Wait for bootstrap to complete
     if (isBootstrapping) {
@@ -18,11 +24,9 @@ const RequireAuth: React.FC<{ children: JSX.Element }> = ({ children }) => {
 
     // After bootstrap, check authentication
     if (!isAuthenticated) {
-        console.log("RequireAuth: Redirecting to login from", location);
         return <Navigate to="/login" state={{ from: location }} replace />;
     }
 
-    console.log("RequireAuth: Authorized, rendering children");
     return children;
 };
 

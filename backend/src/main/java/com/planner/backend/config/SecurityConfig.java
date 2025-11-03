@@ -30,19 +30,14 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
             .cors(cors -> cors.configurationSource(corsConfigurationSource()))
-                .csrf(csrf -> csrf
-                        .ignoringRequestMatchers("/h2-console/**"))
-                .headers(headers -> headers
-                        .frameOptions(HeadersConfigurer.FrameOptionsConfig::disable)  // Disable frame options for H2 console
-                )
+                .csrf(AbstractHttpConfigurer::disable)
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .logout(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth ->
                         auth.requestMatchers(
                                         "/api/user/login",
                                         "/api/user/register",
-                                        "/api/auth/me",
-                                        "/h2-console/**"
+                                        "/api/auth/me"
                                 ).permitAll()
                                 .requestMatchers("/api/**").authenticated()
                                 .anyRequest().permitAll())

@@ -13,7 +13,7 @@ import NavBar from "./components/NavBar/NavBar.tsx";
 function App() {
 
     const dispatch = useDispatch();
-    const user = useSelector((state: any) => state.user.isAuthenticated)
+    const isAuthenticated = useSelector((state: any) => state.user.isAuthenticated)
     const [scrolled, setScrolled] = useState(false);
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const [showContactModal, setShowContactModal] = useState(false);
@@ -49,7 +49,7 @@ function App() {
                 dispatch(logout());
             }
         })();
-    }, []);
+    }, [isAuthenticated, dispatch]);
 
   return (
     <BrowserRouter>
