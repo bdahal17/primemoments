@@ -15,3 +15,10 @@ jwt:
 #  spring.liquibase.change-log=classpath:db/changelog/db.changelog-master.yaml
 #  spring.liquibase.default-schema=public
 #  spring.liquibase.drop-first=false
+
+#DB_HOST: ${DB_HOST}
+#DB_PORT: ${DB_PORT:5432}
+#DB_NAME: ${DB_NAME}
+#DB_USERNAME: ${DB_USERNAME}
+#DB_PASSWORD: ${DB_PASSWORD}
+DB_SECRET_ARN: ${DB_SECRET_ARN}
