@@ -1,5 +1,6 @@
 package com.planner.backend.controller;
 
+import com.planner.backend.DTO.LoginRequest;
 import com.planner.backend.DTO.UserDto;
 import com.planner.backend.DTO.UserResponse;
 import com.planner.backend.config.JWTConfig;
@@ -22,13 +23,13 @@ public class UserController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<UserResponse> login(String email, String password) {
+    public ResponseEntity<UserResponse> login(@RequestBody LoginRequest loginRequest) {
         try {
-            UserResponse userResponse = userService.authenticateUser(email, password);
+            UserResponse userResponse = userService.authenticateUser(loginRequest.getEmail(), loginRequest.getPassword());
             if(userResponse == null) {
                 return new ResponseEntity<>(null, HttpStatus.UNAUTHORIZED);
             }
-            userResponse.setToken(jwtConfig.generateToken(email));
+            userResponse.setToken(jwtConfig.generateToken(loginRequest.getEmail()));
             return new ResponseEntity<>(userResponse, HttpStatus.OK);
         } catch (Exception e) {
             e.printStackTrace();
@@ -39,10 +40,10 @@ public class UserController {
     @PostMapping("/register")
     public ResponseEntity<UserResponse> register(@RequestBody UserDto userDto) {
         try {
-            if(!userService.isValidUsername(userDto.getEmail())) {
+            if(userService.existsByEmail(userDto.getEmail())) {
                 return new ResponseEntity<>(null, HttpStatus.CONFLICT);
             }
-            UserResponse userResponse = userService.saveUser(userDto);
+            UserResponse userResponse = userService.createUser(userDto);
             userResponse.setToken(jwtConfig.generateToken(userDto.getEmail()));
             return new ResponseEntity<>(userResponse, HttpStatus.OK);
         } catch (Exception e) {

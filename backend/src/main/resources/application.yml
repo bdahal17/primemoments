@@ -3,22 +3,14 @@ server:
 spring:
   application:
     name: backend
-#  liquibase:
-#    enabled: true
-#    change-log: classpath:db/changelog/db.changelog-master.yaml
-#    default-schema: public
-#    drop-first: false
+  jpa:
+    hibernate:
+      ddl-auto: none
 jwt:
   secret-arn: ${JWT_SECRET_ARN:}
-
-#  spring.liquibase.enabled=true
-#  spring.liquibase.change-log=classpath:db/changelog/db.changelog-master.yaml
-#  spring.liquibase.default-schema=public
-#  spring.liquibase.drop-first=false
-
-#DB_HOST: ${DB_HOST}
-#DB_PORT: ${DB_PORT:5432}
-#DB_NAME: ${DB_NAME}
-#DB_USERNAME: ${DB_USERNAME}
-#DB_PASSWORD: ${DB_PASSWORD}
 DB_SECRET_ARN: ${DB_SECRET_ARN}
+#logging:
+#  level:
+#    liquibase: DEBUG
+#    liquibase.changelog: DEBUG
+#    liquibase.executor: DEBUG

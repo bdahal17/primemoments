@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
+import liquibase.integration.spring.SpringLiquibase;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -143,5 +144,17 @@ public class DBConfig {
         String dbname;
         String username;
         String password;
+    }
+
+    @Bean
+    public SpringLiquibase liquibase(DataSource dataSource) {
+        SpringLiquibase liquibase = new SpringLiquibase();
+        liquibase.setDataSource(dataSource);
+        liquibase.setChangeLog("classpath:db/changelog/changelog-master.yml");
+        liquibase.setDropFirst(false);  // Set to true to drop all tables first (dangerous!)
+        liquibase.setDefaultSchema("public");
+        liquibase.setShouldRun(true);
+
+        return liquibase;
     }
 }

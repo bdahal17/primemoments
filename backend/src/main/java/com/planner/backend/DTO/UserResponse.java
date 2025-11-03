@@ -1,14 +1,17 @@
 package com.planner.backend.DTO;
 
-import lombok.Getter;
-import lombok.Setter;
+import lombok.Data;
 
-@Getter
-@Setter
+import java.util.Set;
+
+@Data
 public class UserResponse {
     private Long id;
+    private String email;
     private String firstName;
     private String lastName;
-    private String email;
+    private boolean enabled;
+    private boolean locked;
+    private Set<String> roles;  // User's role names
     private String token;
 }
