@@ -27,7 +27,7 @@ public class DBConfig {
     private static final Logger logger = LoggerFactory.getLogger(DBConfig.class);
     private final ObjectMapper objectMapper = new ObjectMapper();
 
-    @Value("${DB_SECRET_ARN:}")
+    @Value("${DB_SECRET_ARN}")
     private String dbSecretArn;
 
     @Value("${AWS_REGION:us-east-2}")

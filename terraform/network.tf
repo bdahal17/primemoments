@@ -126,7 +126,7 @@ resource "aws_security_group" "database" {
     from_port   = 5432
     to_port     = 5432
     protocol    = "tcp"
-    cidr_blocks = ["181.215.172.203/32"]
+    cidr_blocks = ["75.227.168.229/32"]
     description = "local connection"
   }
 
