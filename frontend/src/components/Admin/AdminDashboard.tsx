@@ -30,7 +30,7 @@ const AdminDashboard = () => {
     <div className="admin-dashboard">
       <div className="admin-header">
         <h1>Admin Dashboard</h1>
-        <p>Welcome back, {userInfo?.name || 'Admin'}!</p>
+        <p>Welcome back, {userInfo?.firstName || 'Admin'}!</p>
       </div>
 
       <div className="admin-content">

@@ -1,13 +1,6 @@
 import {createSlice} from "@reduxjs/toolkit";
 import type { PayloadAction } from "@reduxjs/toolkit";
 
-interface UserInfo {
-  id?: number;
-  name?: string;
-  email?: string;
-  role?: string;
-}
-
 interface UserState {
   isAuthenticated: boolean;
   userInfo: UserInfo | null;
@@ -28,18 +21,8 @@ export interface UserInfo {
     lastName: string;
     email: string;
     token: string;
+    role?: string;
 }
-export interface UserState {
-    isAuthenticated: boolean;
-    userInfo: UserInfo | null;
-    isBootstrapping: boolean;
-}
-
-const initialState: UserState = {
-  isAuthenticated: false,
-  userInfo: null,
-  isBootstrapping: true,
-};
 export const userSlice = createSlice({
   name: 'user',
   initialState,
