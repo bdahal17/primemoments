@@ -2,7 +2,7 @@ import React, {useEffect, useState} from "react";
 import emailjs from "@emailjs/browser";
 import EventPlanningApp from "./EventPlanningApp";
 import Login from "./components/Account/Login.tsx";
-import {BrowserRouter, Route, Router, Routes} from "react-router-dom";
+import {BrowserRouter, Route, Router, Routes, useLocation} from "react-router-dom";
 import Account from "./components/Account/Account.tsx";
 import RequireAuth from "./auth/RequireAuth.tsx";
 import {useDispatch, useSelector} from "react-redux";
@@ -18,6 +18,7 @@ function App() {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const [showContactModal, setShowContactModal] = useState(false);
     const [showGalleryModal, setShowGalleryModal] = useState(false);
+    const location = useLocation();
 
 
 
@@ -49,7 +50,7 @@ function App() {
                 dispatch(logout());
             }
         })();
-    }, [isAuthenticated, dispatch]);
+    }, [isAuthenticated, dispatch, location.pathname]);
 
   return (
     <BrowserRouter>
