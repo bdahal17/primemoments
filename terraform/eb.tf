@@ -10,6 +10,25 @@ resource "aws_elastic_beanstalk_environment" "dev" {
   # Must match an available solution stack in your region
   solution_stack_name = "64bit Amazon Linux 2023 v4.7.2 running Docker"
 
+  # CloudWatch Logs Streaming Configuration
+  setting {
+    namespace = "aws:elasticbeanstalk:cloudwatch:logs"
+    name      = "StreamLogs"
+    value     = "true"
+  }
+
+  setting {
+    namespace = "aws:elasticbeanstalk:cloudwatch:logs"
+    name      = "DeleteOnTerminate"
+    value     = "false"
+  }
+
+  setting {
+    namespace = "aws:elasticbeanstalk:cloudwatch:logs"
+    name      = "RetentionInDays"
+    value     = "7"
+  }
+
   setting {
     namespace = "aws:autoscaling:launchconfiguration"
     name      = "InstanceType"
