@@ -9,6 +9,9 @@ import {useDispatch, useSelector} from "react-redux";
 import {bootstrapUser, logout} from "./store/userSlice.ts";
 import {fetchUser} from "./service/userService.ts";
 import NavBar from "./components/NavBar/NavBar.tsx";
+import AdminRoute from "./components/shared/AdminRoute.tsx";
+import AdminDashboard from "./components/Admin/AdminDashboard.tsx";
+import Unauthorized from "./components/shared/Unauthorized.tsx";
 
 function App() {
 
@@ -79,6 +82,12 @@ function App() {
                     <Account />
                 </RequireAuth>
             } />
+            <Route path="/admin" element={
+                <AdminRoute>
+                    <AdminDashboard />
+                </AdminRoute>
+            } />
+            <Route path="/unauthorized" element={<Unauthorized />} />
          </Routes>
     </BrowserRouter>
   );
