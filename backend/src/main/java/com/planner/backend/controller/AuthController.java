@@ -1,6 +1,8 @@
 package com.planner.backend.controller;
 
 import com.planner.backend.DTO.UserResponse;
+import com.planner.backend.config.JWTConfig;
+import com.planner.backend.service.UserService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -12,13 +14,29 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class AuthController {
 
+    private final JWTConfig jwtConfig;
+    private final UserService userService;
+
+    public AuthController(JWTConfig jwtConfig, UserService userService) {
+        this.jwtConfig = jwtConfig;
+        this.userService = userService;
+    }
+
     @GetMapping("/me")
     public ResponseEntity<UserResponse> getMe(@RequestHeader("Authorization") String token) {
-        UserResponse userResponse = new UserResponse();
-        userResponse.setEmail("email");
-        userResponse.setFirstName("John");
-        userResponse.setLastName("Doe");
-        userResponse.setToken(token);
-        return new ResponseEntity<>(userResponse, HttpStatus.OK);
+        try {
+            String cleanedToken = token.startsWith("Bearer ") ? token.substring(7).trim() : token.trim();
+            boolean jwtValid = jwtConfig.validateToken(cleanedToken);
+            if (jwtValid) {
+                String email = jwtConfig.extractUsername(cleanedToken);
+                UserResponse user =  userService.getUserByEmail(email);
+                return new ResponseEntity<>(user, HttpStatus.OK);
+            } else {
+                return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+            }
+        } catch (Exception e) {
+            System.out.println("Token validation error: " + e.getMessage());
+            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+        }
     }
 }

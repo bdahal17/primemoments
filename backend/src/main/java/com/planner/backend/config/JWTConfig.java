@@ -122,14 +122,19 @@ public class JWTConfig {
             return true;
         } catch (SignatureException e) {
             // Invalid signature
+            System.out.println("Token validation error: " + e.getMessage());
         } catch (MalformedJwtException e) {
             // Invalid token
+            System.out.println("Token validation error: " + e.getMessage());
         } catch (ExpiredJwtException e) {
             // Expired token
+            System.out.println("Token validation error: " + e.getMessage());
         } catch (UnsupportedJwtException e) {
             // Unsupported token
+            System.out.println("Token validation error: " + e.getMessage());
         } catch (IllegalArgumentException e) {
             // Empty claims
+            System.out.println("Token validation error: " + e.getMessage());
         }
         return false;
     }

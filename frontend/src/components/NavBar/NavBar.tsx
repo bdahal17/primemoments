@@ -3,6 +3,7 @@ import {Menu, Sparkles, X} from "lucide-react";
 import Navigation from "./Navigation.tsx";
 import {useNavigate} from "react-router-dom";
 import React from "react";
+import {useAppSelector} from "../../store/hooks.ts";
 
 interface NavBarProps {
     scrolled: boolean;
@@ -13,8 +14,9 @@ interface NavBarProps {
 }
 const NavBar: React.FC<NavBarProps> = ({ scrolled, setShowContactModal, setShowGalleryModal, setIsMenuOpen, isMenuOpen }: NavBarProps) => {
 
-  const user = useSelector((state: any) => state.user.isAuthenticated);
+  const user = useAppSelector((state) => state.user.isAuthenticated);
   const navigate = useNavigate();
+  const isBootstrapping = useAppSelector((state) => state.user.isBootstrapping);
   return (
       <nav
           style={{
@@ -28,11 +30,14 @@ const NavBar: React.FC<NavBarProps> = ({ scrolled, setShowContactModal, setShowG
               <div className="flex justify-between items-center">
                   <div
                       className="flex items-center space-x-2"
-                      onClick={() => navigate('/')}
+                      // go to path '/' and refresh the page
+                      onClick={() => {
+                          navigate('/');
+                      }}
                     >
                       <Sparkles className={`h-8 w-8 ${scrolled ? 'text-rose-500' : 'text-white'}`}/>
                       <span className={`text-2xl font-bold ${scrolled ? 'text-gray-900' : 'text-white'}`}>
-                        Elegance Events
+                        GG Decor
                       </span>
                   </div>
                   {location.pathname === '/' && (<Navigation

@@ -9,11 +9,12 @@ import {useDispatch, useSelector} from "react-redux";
 import {bootstrapUser, logout} from "./store/userSlice.ts";
 import {fetchUser} from "./service/userService.ts";
 import NavBar from "./components/NavBar/NavBar.tsx";
+import {useAppSelector} from "./store/hooks.ts";
 
 function App() {
 
     const dispatch = useDispatch();
-    const isAuthenticated = useSelector((state: any) => state.user.isAuthenticated)
+    const isAuthenticated = useAppSelector((state) => state.user.isAuthenticated)
     const [scrolled, setScrolled] = useState(false);
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const [showContactModal, setShowContactModal] = useState(false);
@@ -52,8 +53,7 @@ function App() {
         })();
     }, [isAuthenticated, dispatch, location.pathname]);
 
-  return (
-    <BrowserRouter>
+  return (<>
         <NavBar
             scrolled={scrolled}
             setShowContactModal={setShowContactModal}
@@ -81,7 +81,7 @@ function App() {
                 </RequireAuth>
             } />
          </Routes>
-    </BrowserRouter>
+      </>
   );
 }
 

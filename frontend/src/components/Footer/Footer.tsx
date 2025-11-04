@@ -11,7 +11,7 @@ const Footer: React.FC<FooterProps> = ({ setShowGalleryModal }: FooterProps) => 
                     <div>
                         <div className="flex items-center space-x-2 mb-4">
                             <Sparkles className="h-6 w-6 text-rose-400"/>
-                            <span className="text-xl font-bold">Elegance Events</span>
+                            <span className="text-xl font-bold">GG Decor</span>
                         </div>
                         <p className="text-gray-400">
                             Creating unforgettable moments since 2013
@@ -57,7 +57,7 @@ const Footer: React.FC<FooterProps> = ({ setShowGalleryModal }: FooterProps) => 
                 </div>
 
                 <div className="border-t border-gray-800 pt-8 text-center text-gray-400">
-                    <p>&copy; 2025 Elegance Events. All rights reserved.</p>
+                    <p>&copy; 2025 GG Decor. All rights reserved.</p>
                 </div>
             </div>
         </footer>

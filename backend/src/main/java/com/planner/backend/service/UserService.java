@@ -91,6 +91,13 @@ public class UserService {
         return mapToUserResponse(user);
     }
 
+    @Transactional(readOnly = true)
+    public UserResponse getUserByEmail(String email) {
+        UserProfile user = userRepository.findUserProfileByEmail(email)
+                .orElseThrow(() -> new RuntimeException("User not found with email: " + email));
+        return mapToUserResponse(user);
+    }
+
     /**
      * Helper method to map UserProfile entity to UserResponse DTO
      */
