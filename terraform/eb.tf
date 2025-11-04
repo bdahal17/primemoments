@@ -9,19 +9,6 @@ resource "aws_elastic_beanstalk_environment" "dev" {
 
   # Must match an available solution stack in your region
   solution_stack_name = "64bit Amazon Linux 2023 v4.7.2 running Docker"
-
-  setting {
-    namespace = "aws:elasticbeanstalk:environment:proxy"
-    name      = "ConfigDocument"
-    value     = jsonencode({
-      nginx = {
-        http = {
-          types_hash_max_size = 2048
-          types_hash_bucket_size = 128
-        }
-      }
-    })
-  }
   # CloudWatch Logs Streaming Configuration
   setting {
     namespace = "aws:elasticbeanstalk:cloudwatch:logs"
