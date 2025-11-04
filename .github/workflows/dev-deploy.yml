@@ -80,9 +80,6 @@ jobs:
           if aws secretsmanager describe-secret --secret-id "$SECRET_NAME" --region "$AWS_REGION" >/dev/null 2>&1; then
             echo "Secret exists — putting new secret value"
             aws secretsmanager put-secret-value --secret-id "$SECRET_NAME" --secret-string "$JWT_SECRET" --region "$AWS_REGION"
-          else
-            echo "Creating secret $SECRET_NAME"
-            aws secretsmanager create-secret --name "$SECRET_NAME" --secret-string "$JWT_SECRET" --region "$AWS_REGION" --description "JWT secret for PrimeMoments"
           fi
       
           SECRET_ARN=$(aws secretsmanager describe-secret --secret-id "$SECRET_NAME" --region "$AWS_REGION" --query 'ARN' --output text)
@@ -130,12 +127,6 @@ jobs:
             aws secretsmanager put-secret-value \
               --secret-id "$DB_SECRET_NAME" \
               --secret-string "$SECRET_VALUE" \
-              --region "$AWS_REGION"
-          else
-            aws secretsmanager create-secret \
-              --name "$DB_SECRET_NAME" \
-              --secret-string "$SECRET_VALUE" \
-              --description "Database credentials for PrimeMoments" \
               --region "$AWS_REGION"
           fi
           

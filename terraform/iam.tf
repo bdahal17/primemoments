@@ -38,6 +38,12 @@ data "aws_secretsmanager_secret" "jwt_secret" {
   name = "jwt-secret" # Replace with your actual secret name
 }
 
+#arn:aws:secretsmanager:us-east-2:553499405141:secret:primemoments-db-credentials-CQ2lUE
+
+data "aws_secretsmanager_secret" "db_credentials" {
+  name = "primemoments-db-credentials" # Replace with your actual secret name
+}
+
 resource "aws_iam_role_policy" "allow_secret_read" {
   name = "allow-read-jwt-secret"
   role = aws_iam_role.eb_instance_role.id
@@ -51,7 +57,10 @@ resource "aws_iam_role_policy" "allow_secret_read" {
           "secretsmanager:GetSecretValue",
           "secretsmanager:DescribeSecret"
         ]
-        Resource = data.aws_secretsmanager_secret.jwt_secret.arn
+        Resource = [
+          data.aws_secretsmanager_secret.jwt_secret.arn,
+          data.aws_secretsmanager_secret.db_credentials.arn
+        ]
       }
     ]
   })
