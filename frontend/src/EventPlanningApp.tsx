@@ -14,6 +14,7 @@ import ServiceSection from "./components/ServiceSection/ServiceSection.tsx";
 import Testimonial from "./components/Testimonial/Testimonial.tsx";
 import Features from "./components/Features/Features.tsx";
 import Cta from "./components/CTA/Cta.tsx";
+import {useAppSelector} from "./store/hooks.ts";
 
 interface EventPlanningAppProps {
   setShowContactModal: (show: boolean) => void;
@@ -34,7 +35,7 @@ const EventPlanningApp: React.FC<EventPlanningAppProps> = ({
                                       showContactModal
                                     }: EventPlanningAppProps) => {
   const [showPlanningModal, setShowPlanningModal] = useState(false);
-  const user = useSelector((state: any) => state.user.isAuthenticated)
+  const user = useAppSelector((state) => state.user.isAuthenticated)
 
   useEffect(() => {
     const handleScroll = () => {

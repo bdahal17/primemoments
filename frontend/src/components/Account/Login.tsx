@@ -4,6 +4,7 @@ import {replace, useLocation, useNavigate} from "react-router-dom";
 import {userLogin, userRegister} from "../../service/userService.ts";
 import {login} from "../../store/userSlice.ts";
 import {handleJwt} from "../../service/JWTService.ts";
+import {useAppDispatch, useAppSelector} from "../../store/hooks.ts";
 
 interface UserState {
     firstName: string;
@@ -13,8 +14,8 @@ interface UserState {
 }
 
 const Login: React.FC = () => {
-    const dispatch = useDispatch();
-    const isAuthenticated = useSelector((state: any) => state.user.isAuthenticated);
+    const dispatch = useAppDispatch();
+    const isAuthenticated = useAppSelector((state) => state.user.isAuthenticated);
     const navigate = useNavigate();
     const [isLoading, setIsLoading] = useState(false); // Loading state
     const location = useLocation();
@@ -32,7 +33,7 @@ const Login: React.FC = () => {
     useEffect(() => {
         console.log("Login: isAuthenticated =", isAuthenticated);
         if (isAuthenticated) {
-            navigate("/"); // redirect if already logged in
+            navigate("/account");
         }
     }, [isAuthenticated, navigate]);
 
@@ -43,10 +44,9 @@ const Login: React.FC = () => {
         try {
             const user = await userLogin({ email: formUser.email, password: formUser.password}); // call backend
             await handleJwt(user);
-            dispatch(login(user)); // update Redux
-            // go back to where user wanted to go, default to /account
-            const from = location.state?.from?.pathname || "/account";
-            navigate(from, { replace: true });
+            dispatch(login(user));
+            console.log("user logged in:", user);
+            navigate("/account");
         } catch (err: any) {
             console.error("Login error:", err);
             setError(err.message || "Login failed");
@@ -104,8 +104,9 @@ const Login: React.FC = () => {
             {!loginPage ? (
                 <form onSubmit={handleLogin}>
                 <div style={{ marginBottom: "10px" }}>
-                    <label>email:</label>
+                    <label>Email:</label>
                     <input
+                        className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent"
                         type="email"
                         value={formUser.email}
                         onChange={(e) => {
@@ -118,6 +119,7 @@ const Login: React.FC = () => {
                 <div style={{ marginBottom: "10px" }}>
                     <label>Password:</label>
                     <input
+                        className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent"
                         type="password"
                         value={formUser.password}
                         onChange={(e) => {
@@ -142,6 +144,7 @@ const Login: React.FC = () => {
                     <div style={{marginBottom: "10px"}}>
                         <label>First Name:</label>
                         <input
+                            className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent"
                             type="text"
                             value={formUser.firstName}
                             onChange={(e) => {
@@ -154,6 +157,7 @@ const Login: React.FC = () => {
                     <div style={{marginBottom: "10px"}}>
                         <label>Last Name:</label>
                         <input
+                            className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent"
                             type="text"
                             value={formUser.lastName}
                             onChange={(e) => {
@@ -166,6 +170,7 @@ const Login: React.FC = () => {
                     <div style={{marginBottom: "10px"}}>
                         <label>Email:</label>
                         <input
+                            className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent"
                             type="text"
                             value={formUser.email}
                             onChange={(e) => {
@@ -178,6 +183,7 @@ const Login: React.FC = () => {
                     <div style={{marginBottom: "10px"}}>
                         <label>Password:</label>
                         <input
+                            className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent"
                             type="password"
                             value={formUser.password}
                             onChange={(e) => {

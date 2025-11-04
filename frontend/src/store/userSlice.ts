@@ -22,6 +22,24 @@ const initialState: UserState = {
   isBootstrapping: true,
 };
 
+export interface UserInfo {
+    id: number;
+    firstName: string;
+    lastName: string;
+    email: string;
+    token: string;
+}
+export interface UserState {
+    isAuthenticated: boolean;
+    userInfo: UserInfo | null;
+    isBootstrapping: boolean;
+}
+
+const initialState: UserState = {
+  isAuthenticated: false,
+  userInfo: null,
+  isBootstrapping: true,
+};
 export const userSlice = createSlice({
   name: 'user',
   initialState,

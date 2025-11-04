@@ -1,37 +1,37 @@
-variable "app_name" {
-  type    = string
-  default = "primemoments-app"
-}
-
-variable "env_name" {
-  type    = string
-  default = "dev-env"
-}
-
-variable "instance_type" {
-  default     = "t2.small"
-}
-
-variable "solution_stack" {
-  default     = "64bit Amazon Linux 2 v3.7.10 running Corretto 21"
-}
-
 resource "aws_elastic_beanstalk_application" "primemoments-app" {
-  name        = var.app_name
+  name        = var.project_name
   description = "Elastic Beanstalk Application for PrimeMoments"
 }
 
 resource "aws_elastic_beanstalk_environment" "dev" {
-  name        = var.env_name
+  name        = var.environment
   application = aws_elastic_beanstalk_application.primemoments-app.name
 
   # Must match an available solution stack in your region
   solution_stack_name = "64bit Amazon Linux 2023 v4.7.2 running Docker"
+  # CloudWatch Logs Streaming Configuration
+  setting {
+    namespace = "aws:elasticbeanstalk:cloudwatch:logs"
+    name      = "StreamLogs"
+    value     = "true"
+  }
+
+  setting {
+    namespace = "aws:elasticbeanstalk:cloudwatch:logs"
+    name      = "DeleteOnTerminate"
+    value     = "false"
+  }
+
+  setting {
+    namespace = "aws:elasticbeanstalk:cloudwatch:logs"
+    name      = "RetentionInDays"
+    value     = "1"
+  }
 
   setting {
     namespace = "aws:autoscaling:launchconfiguration"
     name      = "InstanceType"
-    value     = "t3.nano"  # smallest instance type
+    value     = "t3.nano" # smallest instance type
   }
 
   setting {
@@ -41,9 +41,27 @@ resource "aws_elastic_beanstalk_environment" "dev" {
   }
 
   setting {
+    namespace = "aws:autoscaling:launchconfiguration"
+    name      = "SecurityGroups"
+    value     = aws_security_group.web.id
+  }
+
+  setting {
     namespace = "aws:elasticbeanstalk:environment"
     name      = "EnvironmentType"
     value     = "SingleInstance"
+  }
+
+  setting {
+    namespace = "aws:ec2:vpc"
+    name      = "VPCId"
+    value     = aws_vpc.main.id
+  }
+
+  setting {
+    namespace = "aws:ec2:vpc"
+    name      = "Subnets"
+    value     = join(",", aws_subnet.public.*.id)
   }
 
   depends_on = [aws_iam_instance_profile.eb_instance_profile]
@@ -67,7 +85,7 @@ resource "aws_elastic_beanstalk_environment" "dev" {
 
 #primemoments-app-ebs3bucket
 
-resource "aws_s3_bucket" "tf_state" {
+resource "aws_s3_bucket" "ebs3bucket-versions" {
   bucket        = "primemoments-app-ebs3bucket"
-  force_destroy = false
+  force_destroy = true
 }

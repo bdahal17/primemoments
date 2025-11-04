@@ -2,7 +2,7 @@ import React, {useEffect, useState} from "react";
 import emailjs from "@emailjs/browser";
 import EventPlanningApp from "./EventPlanningApp";
 import Login from "./components/Account/Login.tsx";
-import {BrowserRouter, Route, Router, Routes} from "react-router-dom";
+import {BrowserRouter, Route, Router, Routes, useLocation} from "react-router-dom";
 import Account from "./components/Account/Account.tsx";
 import RequireAuth from "./auth/RequireAuth.tsx";
 import {useDispatch, useSelector} from "react-redux";
@@ -12,15 +12,17 @@ import NavBar from "./components/NavBar/NavBar.tsx";
 import AdminRoute from "./components/shared/AdminRoute.tsx";
 import AdminDashboard from "./components/Admin/AdminDashboard.tsx";
 import Unauthorized from "./components/shared/Unauthorized.tsx";
+import {useAppSelector} from "./store/hooks.ts";
 
 function App() {
 
     const dispatch = useDispatch();
-    const user = useSelector((state: any) => state.user.isAuthenticated)
+    const isAuthenticated = useAppSelector((state) => state.user.isAuthenticated)
     const [scrolled, setScrolled] = useState(false);
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const [showContactModal, setShowContactModal] = useState(false);
     const [showGalleryModal, setShowGalleryModal] = useState(false);
+    const location = useLocation();
 
 
 
@@ -52,10 +54,9 @@ function App() {
                 dispatch(logout());
             }
         })();
-    }, []);
+    }, [isAuthenticated, dispatch, location.pathname]);
 
-  return (
-    <BrowserRouter>
+  return (<>
         <NavBar
             scrolled={scrolled}
             setShowContactModal={setShowContactModal}
@@ -89,7 +90,7 @@ function App() {
             } />
             <Route path="/unauthorized" element={<Unauthorized />} />
          </Routes>
-    </BrowserRouter>
+      </>
   );
 }
 

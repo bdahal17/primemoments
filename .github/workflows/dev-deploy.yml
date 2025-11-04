@@ -1,5 +1,4 @@
 name: dev-deploy
-
 on:
   push:
     branches: [ main ]
@@ -14,6 +13,9 @@ jobs:
       AWS_REGION: us-east-2
       ECR_REPOSITORY: primemoments-app-ecr
       IMAGE_TAG: ${{ github.sha }}
+      APP_NAME: primemoments-app
+      ENV_NAME: development
+      DB_NAME: primemomentsdb
 
     steps:
       - uses: actions/checkout@v4
@@ -47,6 +49,11 @@ jobs:
 
       - name: Terraform Validate & Plan
         working-directory: terraform
+        env:
+          TF_VAR_db_username: ${{ secrets.DB_USERNAME }}
+          TF_VAR_db_password: ${{ secrets.DB_PASSWORD }}
+          TF_VAR_project_name: ${{ env.APP_NAME }}
+          TF_VAR_environment: ${{ env.ENV_NAME }}
         run: |
           terraform validate
           terraform plan -out=tfplan -input=false
@@ -54,8 +61,30 @@ jobs:
       - name: Terraform Apply
         if: github.ref == 'refs/heads/main'    # only auto-apply on main; adjust as you like
         working-directory: terraform
+        env:
+          TF_VAR_db_username: ${{ secrets.DB_USERNAME }}
+          TF_VAR_db_password: ${{ secrets.DB_PASSWORD }}
+          TF_VAR_project_name: ${{ env.APP_NAME }}
+          TF_VAR_environment: ${{ env.ENV_NAME }}
         run: |
           terraform apply -auto-approve tfplan
+
+      - name: Put JWT secret into Secrets Manager (create or update)
+        env:
+          SECRET_NAME: jwt-secret
+          JWT_SECRET: ${{ secrets.JWT_SECRET }}
+        run: |
+          set -euo pipefail
+      
+          # If secret exists -> put a new value. Otherwise create the secret.
+          if aws secretsmanager describe-secret --secret-id "$SECRET_NAME" --region "$AWS_REGION" >/dev/null 2>&1; then
+            echo "Secret exists — putting new secret value"
+            aws secretsmanager put-secret-value --secret-id "$SECRET_NAME" --secret-string "$JWT_SECRET" --region "$AWS_REGION"
+          fi
+      
+          SECRET_ARN=$(aws secretsmanager describe-secret --secret-id "$SECRET_NAME" --region "$AWS_REGION" --query 'ARN' --output text)
+          echo "SECRET_ARN=$SECRET_ARN" >> $GITHUB_ENV
+
 
       - name: Login to Amazon ECR
         id: login-ecr
@@ -70,13 +99,53 @@ jobs:
           docker build -t $REGISTRY/$REPOSITORY:$IMAGE_TAG -f backend/Dockerfile backend
           docker push $REGISTRY/$REPOSITORY:$IMAGE_TAG
 
-      - name: Generate Dockerrun.aws.json
+      - name: Get RDS Endpoint
+        id: get-rds
+        run: |
+          DB_ENDPOINT=$(aws rds describe-db-instances \
+            --db-instance-identifier ${{ env.APP_NAME }}-${{ env.ENV_NAME }}-postgres \
+            --region $AWS_REGION \
+            --query 'DBInstances[0].Endpoint.Address' \
+            --output text)
+          echo "DB_ENDPOINT=$DB_ENDPOINT" >> $GITHUB_ENV
+          echo "✅ RDS endpoint: $DB_ENDPOINT"
+
+      - name: Store Database Credentials in Secrets Manager
+        run: |
+          DB_SECRET_NAME="primemoments-db-credentials"
+          
+          # Create JSON with all credentials
+          SECRET_VALUE=$(jq -n \
+            --arg username "${{ secrets.DB_USERNAME }}" \
+            --arg password "${{ secrets.DB_PASSWORD }}" \
+            --arg host "$DB_ENDPOINT" \
+            --arg port "5432" \
+            --arg dbname "${{ env.DB_NAME }}" \
+            '{username: $username, password: $password, host: $host, port: $port, dbname: $dbname}')
+          
+          if aws secretsmanager describe-secret --secret-id "$DB_SECRET_NAME" --region "$AWS_REGION" >/dev/null 2>&1; then
+            aws secretsmanager put-secret-value \
+              --secret-id "$DB_SECRET_NAME" \
+              --secret-string "$SECRET_VALUE" \
+              --region "$AWS_REGION"
+          fi
+          
+          DB_SECRET_ARN=$(aws secretsmanager describe-secret \
+            --secret-id "$DB_SECRET_NAME" \
+            --region "$AWS_REGION" \
+            --query 'ARN' \
+            --output text)
+          echo "DB_SECRET_ARN=$DB_SECRET_ARN" >> $GITHUB_ENV
+
+      - name: create Dockerrun.aws.json and deploy to Elastic Beanstalk
         env:
           IMAGE_URI: ${{ steps.login-ecr.outputs.registry }}/${{ env.ECR_REPOSITORY }}:${{ env.IMAGE_TAG }}
-          APP_NAME: primemoments-app
-          ENV_NAME: dev-env
           ECR_IMAGE: ${{ steps.login-ecr.outputs.registry }}/${{ env.ECR_REPOSITORY }}:${{ env.IMAGE_TAG }}
           EB_S3_BUCKET: primemoments-app-ebs3bucket
+          ENV_NAME: ${{ env.ENV_NAME }}
+          APP_NAME: ${{ env.APP_NAME }}
+          DB_NAME: ${{ env.DB_NAME }}
+          DB_ENDPOINT: ${{ env.DB_ENDPOINT }}
         run: |
           echo '{
             "AWSEBDockerrunVersion": "1",
@@ -100,6 +169,15 @@ jobs:
           --source-bundle S3Bucket=$EB_S3_BUCKET,S3Key=Dockerrun.aws.json
           
           aws elasticbeanstalk update-environment \
+          --application-name $APP_NAME \
           --environment-name $ENV_NAME \
-          --version-label $VERSION_LABEL
+          --version-label $VERSION_LABEL \
+          --option-settings \
+            "Namespace=aws:elasticbeanstalk:application:environment,OptionName=DB_SECRET_ARN,Value=$DB_SECRET_ARN" \
+            "Namespace=aws:elasticbeanstalk:application:environment,OptionName=JWT_SECRET_ARN,Value=$SECRET_ARN" \
+            "Namespace=aws:elasticbeanstalk:application:environment,OptionName=AWS_REGION,Value=$AWS_REGION" \
+            "Namespace=aws:elasticbeanstalk:application:environment,OptionName=SPRING_PROFILES_ACTIVE,Value=$ENV_NAME" \
+          --region $AWS_REGION
+          
+
 
