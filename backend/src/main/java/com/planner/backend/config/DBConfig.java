@@ -56,12 +56,12 @@ public class DBConfig {
         config.setDriverClassName("org.postgresql.Driver");
 
         // Connection Pool Settings
-        config.setMaximumPoolSize(10);
-        config.setMinimumIdle(2);
-        config.setConnectionTimeout(30000); // 30 seconds
-        config.setIdleTimeout(600000); // 10 minutes
-        config.setMaxLifetime(1800000); // 30 minutes
-        config.setLeakDetectionThreshold(60000); // 1 minute
+        config.setMaximumPoolSize(5);
+        config.setMinimumIdle(1);
+        config.setConnectionTimeout(15000); // 30 seconds
+        config.setIdleTimeout(300000); // 10 minutes
+        config.setMaxLifetime(900000); // 30 minutes
+        config.setLeakDetectionThreshold(30000); // 1 minute
 
         // Performance Settings
         config.setAutoCommit(true);
