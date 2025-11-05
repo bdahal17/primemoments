@@ -1,6 +1,6 @@
 resource "aws_key_pair" "eb_key" {
   key_name   = "my-eb-key"
-  public_key = file("~/.ssh/id_rsa.pub")
+  public_key = var.ssh_public_key != "" ? var.ssh_public_key : file("~/.ssh/id_rsa.pub")
 }
 
 resource "aws_elastic_beanstalk_application" "primemoments-app" {
