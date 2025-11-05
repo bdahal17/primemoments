@@ -1,3 +1,8 @@
+resource "aws_key_pair" "eb_key" {
+  key_name   = "my-eb-key"
+  public_key = file("~/.ssh/id_rsa.pub")
+}
+
 resource "aws_elastic_beanstalk_application" "primemoments-app" {
   name        = var.project_name
   description = "Elastic Beanstalk Application for PrimeMoments"
@@ -62,6 +67,11 @@ resource "aws_elastic_beanstalk_environment" "dev" {
     namespace = "aws:ec2:vpc"
     name      = "Subnets"
     value     = join(",", aws_subnet.public.*.id)
+  }
+  setting {
+    namespace = "aws:autoscaling:launchconfiguration"
+    name      = "EC2KeyName"
+    value     = aws_key_pair.eb_key.key_name
   }
 
   depends_on = [aws_iam_instance_profile.eb_instance_profile]
