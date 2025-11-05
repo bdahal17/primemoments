@@ -29,6 +29,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             return;
         }
 
+
         System.out.println("JwtAuthenticationFilter processing: " + path);
 
         try {
@@ -53,7 +54,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             System.err.println("JWT Authentication failed: " + e.getMessage());
         }
 
-        filterChain.doFilter(request, response);
+//        filterChain.doFilter(request, response);
     }
 
     private boolean shouldSkipFilter(String path) {
@@ -65,7 +66,11 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 path.matches(".*\\.(js|css|ico|png|jpg|jpeg|svg|woff|woff2|ttf|map)$") ||
                 path.equals("/api/user/login") ||
                 path.equals("/api/user/register") ||
-                path.equals("/api/auth/me") || path.equals("/login");
+                path.equals("/api/auth/me") ||
+                path.equals("/login") ||
+                path.equals("/register") ||
+                path.equals("/account") ||
+                path.equals("/admin");
     }
 
     private String extractTokenFromRequest(HttpServletRequest request) {

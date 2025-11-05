@@ -13,7 +13,8 @@ public class SpaController {
             "/dashboard/**",
             "/profile",
             "/profile/**",
-            "/login"
+            "/login",
+            "/admin"
             // Add other React Router routes as needed
     })
     public String forward() {

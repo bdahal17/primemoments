@@ -46,7 +46,7 @@ const Login: React.FC = () => {
             await handleJwt(user);
             dispatch(login(user));
             console.log("user logged in:", user);
-            navigate("/account");
+            navigate("/admin");
         } catch (err: any) {
             console.error("Login error:", err);
             setError(err.message || "Login failed");

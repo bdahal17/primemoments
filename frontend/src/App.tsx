@@ -84,9 +84,9 @@ function App() {
                 </RequireAuth>
             } />
             <Route path="/admin" element={
-                <AdminRoute>
+                <RequireAuth>
                     <AdminDashboard />
-                </AdminRoute>
+                </RequireAuth>
             } />
             <Route path="/unauthorized" element={<Unauthorized />} />
          </Routes>
