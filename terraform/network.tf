@@ -64,6 +64,14 @@ resource "aws_security_group" "web" {
   description = "Security group for web server"
   vpc_id      = aws_vpc.main.id
 
+  ingress {
+    from_port   = 22
+    to_port     = 22
+    protocol    = "tcp"
+    cidr_blocks = ["75.227.168.229/32"]
+    description = "HTTP from anywhere"
+  }
+
   # HTTP
   ingress {
     from_port   = 80
