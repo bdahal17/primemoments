@@ -182,4 +182,15 @@ jobs:
           --region $AWS_REGION
           
 
+      - name: Print Environment URL
+        run: |
+          APP_URL=$(aws elasticbeanstalk describe-environments \
+            --application-name "$APP_NAME" \
+            --environment-names "$ENV_NAME" \
+            --query "Environments[0].CNAME" \
+            --output text \
+            --region "$AWS_REGION")
+          echo "✅ Your application is live at: http://$APP_URL"
+          
+
 
