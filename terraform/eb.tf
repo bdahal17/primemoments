@@ -36,7 +36,7 @@ resource "aws_elastic_beanstalk_environment" "dev" {
   setting {
     namespace = "aws:autoscaling:launchconfiguration"
     name      = "InstanceType"
-    value     = "t3.micro" # smallest instance type
+    value     = "t3.small" # smallest instance type
   }
 
   setting {
