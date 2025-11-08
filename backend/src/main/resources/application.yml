@@ -16,3 +16,6 @@ logging:
     liquibase.changelog: DEBUG
     liquibase.executor: DEBUG
     root: info
+  file:
+    name: /var/log/spring-boot/application.log
+    path: /var/log/spring-boot

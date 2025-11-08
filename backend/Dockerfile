@@ -1,4 +1,3 @@
-# backend/Dockerfile
 FROM eclipse-temurin:21-jre
 
 WORKDIR /app
@@ -7,11 +6,12 @@ WORKDIR /app
 ARG JAR_FILE=build/libs/*.jar
 COPY ${JAR_FILE} app.jar
 
-# Tell Docker what port your app listens on
 EXPOSE 8080
 
-# (Optional) allow platforms like Beanstalk or Cloud Run to override port
 ENV SERVER_PORT=8080
+# Add logging configuration
+ENV LOGGING_FILE_PATH=/var/log/spring-boot
+ENV LOGGING_FILE_NAME=/var/log/spring-boot/application.log
+ENV LOGGING_LEVEL_ROOT=INFO
 
-ENTRYPOINT ["sh", "-c", "java -Xms256m -Xmx512m -Dserver.port=${PORT:-$SERVER_PORT} -jar /app/app.jar"]
-
+ENTRYPOINT ["sh", "-c", "mkdir -p /var/log/spring-boot && java -Xms256m -Xmx512m -Dserver.port=${PORT:-$SERVER_PORT} -Dlogging.file.path=${LOGGING_FILE_PATH} -Dlogging.file.name=${LOGGING_FILE_NAME} -Dlogging.level.root=INFO -jar /app/app.jar"]
