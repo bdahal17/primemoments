@@ -87,3 +87,8 @@ resource "aws_iam_role_policy" "allow_logs_read" {
     ]
   })
 }
+
+resource "aws_iam_role_policy_attachment" "cloudwatch_agent_policy" {
+  role       = aws_iam_role.eb_instance_role.name
+  policy_arn = "arn:aws:iam::aws:policy/CloudWatchAgentServerPolicy"
+}
