@@ -70,7 +70,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 path.equals("/login") ||
                 path.equals("/register") ||
                 path.equals("/account") ||
-                path.equals("/admin");
+                path.equals("/admin") ||
+                path.startsWith("/actuator/");
     }
 
     private String extractTokenFromRequest(HttpServletRequest request) {

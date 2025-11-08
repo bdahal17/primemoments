@@ -65,3 +65,25 @@ resource "aws_iam_role_policy" "allow_secret_read" {
     ]
   })
 }
+
+resource "aws_iam_role_policy" "allow_logs_read" {
+  name = "allow-read-logs"
+  role = aws_iam_role.eb_instance_role.id
+
+  policy = jsonencode({
+    "Version": "2012-10-17",
+    "Statement": [
+      {
+        "Effect": "Allow",
+        "Action": [
+          "logs:CreateLogGroup",
+          "logs:CreateLogStream",
+          "logs:PutLogEvents",
+          "logs:DescribeLogGroups",
+          "logs:DescribeLogStreams"
+        ],
+        "Resource": "*"
+      }
+    ]
+  })
+}

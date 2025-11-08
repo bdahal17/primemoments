@@ -10,11 +10,9 @@ spring:
 jwt:
   secret-arn: ${JWT_SECRET_ARN:}
 DB_SECRET_ARN: ${DB_SECRET_ARN}
-#logging:
-#  level:
-#    liquibase: DEBUG
-#    liquibase.changelog: DEBUG
-#    liquibase.executor: DEBUG
-#  server.shutdown=graceful
-#  spring.lifecycle.timeout-per-shutdown-phase=30s
-
+logging:
+  level:
+    liquibase: DEBUG
+    liquibase.changelog: DEBUG
+    liquibase.executor: DEBUG
+    root: info
