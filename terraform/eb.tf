@@ -77,21 +77,21 @@ resource "aws_elastic_beanstalk_environment" "dev" {
   depends_on = [aws_iam_instance_profile.eb_instance_profile]
 }
 
-resource "aws_elastic_beanstalk_application_version" "app_version" {
-  name        = "${var.project_name}-v1"
-  application = aws_elastic_beanstalk_application.primemoments-app.name
-
-  # Instead of S3 zip, use a local JSON file
-  # We'll create it with the ECR image URI
-  description = "App version using ECR image"
-  bucket      = aws_s3_bucket.ebs3bucket-versions.bucket
-  key         = "Dockerrun.aws.json"
-
-  # Optional: enable to replace automatically
-  lifecycle {
-    ignore_changes = [description]
-  }
-}
+#resource "aws_elastic_beanstalk_application_version" "app_version" {
+#  name        = "${var.project_name}-v1"
+#  application = aws_elastic_beanstalk_application.primemoments-app.name
+#
+#  # Instead of S3 zip, use a local JSON file
+#  # We'll create it with the ECR image URI
+#  description = "App version using ECR image"
+#  bucket      = aws_s3_bucket.ebs3bucket-versions.bucket
+#  key         = "Dockerrun.aws.json"
+#
+#  # Optional: enable to replace automatically
+#  lifecycle {
+#    ignore_changes = [description]
+#  }
+#}
 
 #primemoments-app-ebs3bucket
 
