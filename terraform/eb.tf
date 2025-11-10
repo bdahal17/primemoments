@@ -77,8 +77,6 @@ resource "aws_elastic_beanstalk_environment" "dev" {
   depends_on = [aws_iam_instance_profile.eb_instance_profile]
 }
 
-#primemoments-app-ebs3bucket
-
 resource "aws_s3_bucket" "ebs3bucket-versions" {
   bucket        = "primemoments-app-ebs3bucket"
   force_destroy = true
