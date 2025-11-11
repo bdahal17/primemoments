@@ -18,6 +18,7 @@ export async function handleJwt(user: UserResponse): Promise<UserInfo> {
         if(isTokenExpired(user.token)) {
             throw new Error("JWT token has expired");
         }
+        localStorage.setItem("jwt", user.token);
         return {
             id: user.id,
             firstName: decodeToken(user.token)?.FIRST_NAME || '',

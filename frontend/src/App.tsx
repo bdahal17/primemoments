@@ -30,15 +30,18 @@ function App() {
             localStorage.removeItem("jwt");
             return;
         }
-        (async () => {
-            try {
-                const user = await fetchUser(token);
-                dispatch(login(user));
-            } catch (err) {
-                localStorage.removeItem("jwt");
-                dispatch(logout());
-            }
-        })();
+        if(!isAuthenticated) {
+            console.log("App useEffect - fetching user with token:", token);
+            (async () => {
+                try {
+                    const user = await fetchUser(token);
+                    dispatch(login(user));
+                } catch (err) {
+                    localStorage.removeItem("jwt");
+                    dispatch(logout());
+                }
+            })();
+        }
     }, [isAuthenticated, dispatch, location.pathname]);
 
   return (<>
