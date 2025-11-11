@@ -1,40 +1,52 @@
 import type {UserResponse} from "./userService.ts";
+import type {UserInfo} from "../store/userSlice.ts";
+import {RolePermission} from "../store/userSlice.ts";
+import { jwtDecode } from "jwt-decode";
 
-export async function handleJwt(user: UserResponse): Promise<any> {
-    // In a real application, you would verify the token's signature and decode it properly.
-    // Here, we'll just simulate decoding by splitting the token.
-    const expirationTime = new Date().getTime() + 60 * 60 * 1000; // 1 hour from now
-    localStorage.setItem("authTokenExpiry", expirationTime.toString());
-    localStorage.setItem("jwt", user.token);
-
-    // try {
-    //     const payload = user.token.split('.')[1];
-    //     const decodedPayload = atob(payload);
-    //     return JSON.parse(decodedPayload);
-    // } catch (error) {
-    //     throw new Error("Invalid JWT token");
-    // }
+export interface JwtPayload {
+    sub: string;
+    ROLES: string[];
+    FIRST_NAME: string;
+    LAST_NAME: string;
+    EMAIL: string;
+    exp: number; // optional, JWT expiry
 }
 
-export async function validateJwt(token): Promise<void> {
-    // const expiry = localStorage.getItem("authTokenExpiry");
-    //
-    // if (!token || !expiry) {
-    //     throw new Error("No token or expiry found");
-    // }
-    //
-    // const now = new Date().getTime();
-    // if (now > parseInt(expiry)) {
-    //     localStorage.removeItem("jwt");
-    //     localStorage.removeItem("authTokenExpiry");
-    //     throw new Error("Token has expired");
-    // }
-    return Promise.resolve();
+export async function handleJwt(user: UserResponse): Promise<UserInfo> {
+    try {
+        console.log("Handling JWT for user:", user);
+        if(isTokenExpired(user.token)) {
+            throw new Error("JWT token has expired");
+        }
+        return {
+            id: user.id,
+            firstName: decodeToken(user.token)?.FIRST_NAME || '',
+            lastName: decodeToken(user.token)?.LAST_NAME || '',
+            email: decodeToken(user.token)?.EMAIL || '',
+            role: decodeToken(user.token)?.ROLES.includes(RolePermission.ADMIN) ? RolePermission.ADMIN : RolePermission.USER,
+        }
+    } catch (error) {
+        throw error;
+    }
+}
+
+export const decodeToken = (token: string): JwtPayload | null => {
+    try {
+        return jwtDecode<JwtPayload>(token);
+    } catch (error) {
+        console.error('Invalid token', error);
+        return null;
+    }
 };
 
-function parseJwt(token: string) {
-    const base64Payload = token.split('.')[1];
-    const payload = atob(base64Payload);
-    return JSON.parse(payload);
-}
+export const isTokenExpired = (token: string): boolean => {
+    try {
+        const decodedToken = jwtDecode<JwtPayload>(token);
+        const currentTime = Math.floor(Date.now() / 1000);
+        return decodedToken.exp < currentTime;
+    } catch (error) {
+        return true;  // Consider invalid tokens as expired
+    }
+};
+
 

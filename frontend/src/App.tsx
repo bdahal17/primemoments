@@ -1,21 +1,19 @@
 import React, {useEffect, useState} from "react";
-import emailjs from "@emailjs/browser";
 import EventPlanningApp from "./EventPlanningApp";
 import Login from "./components/Account/Login.tsx";
-import {BrowserRouter, Route, Router, Routes, useLocation} from "react-router-dom";
+import { Route, Routes, useLocation} from "react-router-dom";
 import Account from "./components/Account/Account.tsx";
 import RequireAuth from "./auth/RequireAuth.tsx";
-import {useDispatch, useSelector} from "react-redux";
-import {bootstrapUser, logout} from "./store/userSlice.ts";
+import {useDispatch} from "react-redux";
+import {login, logout, RolePermission} from "./store/userSlice.ts";
 import {fetchUser} from "./service/userService.ts";
 import NavBar from "./components/NavBar/NavBar.tsx";
-import AdminRoute from "./components/shared/AdminRoute.tsx";
 import AdminDashboard from "./components/Admin/AdminDashboard.tsx";
 import Unauthorized from "./components/shared/Unauthorized.tsx";
 import {useAppSelector} from "./store/hooks.ts";
+import {isTokenExpired} from "./service/JWTService.ts";
 
 function App() {
-
     const dispatch = useDispatch();
     const isAuthenticated = useAppSelector((state) => state.user.isAuthenticated)
     const [scrolled, setScrolled] = useState(false);
@@ -24,32 +22,19 @@ function App() {
     const [showGalleryModal, setShowGalleryModal] = useState(false);
     const location = useLocation();
 
-
-
-
     useEffect(() => {
-        emailjs.init({
-          publicKey: import.meta.env.VITE_EMAILJS_PUBLIC_KEY,
-        });
-    }, []);
-
-    useEffect(() => {
-        // Try to bootstrap auth from sessionStorage
+        console.log("App useEffect - location changed:", location.pathname);
         const token = localStorage.getItem("jwt");
-        if (!token) {
-            console.log("No token found, skipping bootstrap");
-            dispatch(bootstrapUser({ userInfo: null, isAuthenticated: false, isBootstrapping: false }));
+        if (!token || token && isTokenExpired(token)) {
+            dispatch(logout());
+            localStorage.removeItem("jwt");
             return;
-        };
-
-        // Optionally verify token server-side and get user info
+        }
         (async () => {
             try {
                 const user = await fetchUser(token);
-                console.log("Bootstrapping user from token:", user);
-                dispatch(bootstrapUser({ userInfo: user, isAuthenticated: true, isBootstrapping: false }));
+                dispatch(login(user));
             } catch (err) {
-                console.error("Token invalid, logging out:", err);
                 localStorage.removeItem("jwt");
                 dispatch(logout());
             }
@@ -79,12 +64,12 @@ function App() {
             }/>
             <Route path="/login" element={<Login/>} />
             <Route path="/account" element={
-                <RequireAuth>
+                <RequireAuth requiredRole={RolePermission.USER}>
                     <Account />
                 </RequireAuth>
             } />
             <Route path="/admin" element={
-                <RequireAuth>
+                <RequireAuth requiredRole={RolePermission.ADMIN}>
                     <AdminDashboard />
                 </RequireAuth>
             } />

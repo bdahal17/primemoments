@@ -12,7 +12,9 @@
   "dependencies": {
     "@emailjs/browser": "^4.4.1",
     "@reduxjs/toolkit": "^2.9.2",
+    "@types/jwt-decode": "^2.2.1",
     "ci": "^2.3.0",
+    "jwt-decode": "^4.0.0",
     "lucide-react": "^0.545.0",
     "react": "^19.2.0",
     "react-dom": "^19.2.0",

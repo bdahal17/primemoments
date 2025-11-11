@@ -1,32 +1,50 @@
 import React from "react";
 import type {JSX} from "react";
 import {Navigate, useLocation} from "react-router-dom";
-import {useDispatch, useSelector} from "react-redux";
-import {logout} from "../store/userSlice.ts";
+import {logout, RolePermission} from "../store/userSlice.ts";
 import {useAppDispatch, useAppSelector} from "../store/hooks.ts";
+import {isTokenExpired} from "../service/JWTService.ts";
 
-const RequireAuth: React.FC<{ children: JSX.Element }> = ({ children }) => {
+interface RequireAuthProps {
+    children: JSX.Element;
+    requiredRole: RolePermission;
+    fallbackRoute?: string;
+}
+
+const RequireAuth: React.FC<RequireAuthProps> = ({ children, requiredRole }: RequireAuthProps) => {
     const isAuthenticated = useAppSelector((state) => state.user.isAuthenticated);
     const isBootstrapping = useAppSelector((state) => state.user.isBootstrapping);
+    const userInfo = useAppSelector((state) => state.user.userInfo);
     const location = useLocation();
     const dispatch = useAppDispatch();
-
     const jwtToken = localStorage.getItem("jwt");
 
-    if(!jwtToken) {
+    console.log("RequireAuth - isAuthenticated:", isAuthenticated, "userRole:", userInfo?.role, "isBootstrapping:", isBootstrapping);
+
+    if(!jwtToken || jwtToken && isTokenExpired(jwtToken)) {
         dispatch(logout());
+        localStorage.removeItem("jwt");
         return <Navigate to="/login" state={{ from: location }} replace />;
     }
 
-    // Wait for bootstrap to complete
     if (isBootstrapping) {
         return <div>Loading...</div>;
     }
 
-    // After bootstrap, check authentication
     if (!isAuthenticated) {
         dispatch(logout());
         return <Navigate to="/login" state={{ from: location }} replace />;
+    }
+
+    if (requiredRole && userInfo?.role !== requiredRole) {
+        switch (userInfo.role) {
+            case RolePermission.ADMIN:
+                return <Navigate to="/admin" state={{ from: location }} replace />;
+            case RolePermission.USER:
+                return <Navigate to="/account" state={{ from: location }} replace />;
+            default:
+                return <Navigate to="/login" state={{ from: location }} replace />;
+        }
     }
 
     return children;

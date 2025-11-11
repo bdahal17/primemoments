@@ -62,6 +62,7 @@ resource "aws_elastic_beanstalk_environment" "dev" {
     name      = "VPCId"
     value     = aws_vpc.main.id
   }
+
   setting {
     namespace = "aws:ec2:vpc"
     name      = "Subnets"

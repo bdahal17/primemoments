@@ -2,6 +2,7 @@ package com.planner.backend.service;
 
 import com.planner.backend.DTO.UserDto;
 import com.planner.backend.DTO.UserResponse;
+import com.planner.backend.config.JWTConfig;
 import com.planner.backend.entity.Role;
 import com.planner.backend.entity.UserProfile;
 import com.planner.backend.repository.RoleRepository;
@@ -21,13 +22,16 @@ public class UserService {
     private final BCryptPasswordEncoder passwordEncoder;
     private final UserProfileRepository userRepository;
     private final RoleRepository roleRepository;
+    private final JWTConfig jwtConfig;
 
     public UserService(BCryptPasswordEncoder passwordEncoder,
                        UserProfileRepository userRepository,
-                       RoleRepository roleRepository) {
+                       RoleRepository roleRepository,
+                       JWTConfig jwtConfig) {
         this.passwordEncoder = passwordEncoder;
         this.userRepository = userRepository;
         this.roleRepository = roleRepository;
+        this.jwtConfig = jwtConfig;
     }
 
     public boolean existsByEmail(String username) {
@@ -44,10 +48,9 @@ public class UserService {
         UserProfile user = new UserProfile();
         user.setEmail(userDto.getEmail());
         user.setFirstName(userDto.getFirstName());
-        user.setLastName(userDto.getLastName());  // ✅ Fixed: was user.getLastName()
+        user.setLastName(userDto.getLastName());
         user.setPasswordHash(passwordEncoder.encode(userDto.getPassword()));
 
-        // Assign default USER role
         Role userRole = roleRepository.findByName("USER")
                 .orElseThrow(() -> new RuntimeException("Default role not found"));
 
@@ -86,8 +89,6 @@ public class UserService {
         if (!passwordEncoder.matches(password, user.getPasswordHash())) {
             throw new RuntimeException("Invalid email or password");
         }
-
-        // Return user response
         return mapToUserResponse(user);
     }
 
@@ -109,12 +110,7 @@ public class UserService {
         response.setLastName(user.getLastName());
         response.setEnabled(user.isEnabled());
         response.setLocked(user.isLocked());
-
-        // Include roles if needed
-        Set<String> roles = user.getRoles().stream()
-                .map(Role::getName)
-                .collect(Collectors.toSet());
-        response.setRoles(roles);
+        response.setToken(jwtConfig.generateToken(user));
 
         return response;
     }

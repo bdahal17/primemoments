@@ -12,6 +12,5 @@ public class UserResponse {
     private String lastName;
     private boolean enabled;
     private boolean locked;
-    private Set<String> roles;  // User's role names
     private String token;
 }

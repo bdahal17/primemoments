@@ -17,11 +17,8 @@ const Account: React.FC = () => {
             <p>This is a placeholder for the Account component.</p>
             <button
                 onClick={() => {
-                    // Implement logout functionality here
-                    // clear session jwt
                     localStorage.removeItem("jwt");
                     localStorage.removeItem("authTokenExpiry")
-                    // window.location.href = "/";
                     dispatch(logout());
                 }}
             >

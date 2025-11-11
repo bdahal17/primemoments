@@ -13,11 +13,9 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 public class UserController {
 
-    private final JWTConfig jwtConfig;
     private final UserService userService;
 
-    public UserController(JWTConfig jwtConfig, UserService userService) {
-        this.jwtConfig = jwtConfig;
+    public UserController(UserService userService) {
         this.userService = userService;
 
     }
@@ -29,7 +27,6 @@ public class UserController {
             if(userResponse == null) {
                 return new ResponseEntity<>(null, HttpStatus.UNAUTHORIZED);
             }
-            userResponse.setToken(jwtConfig.generateToken(loginRequest.getEmail()));
             return new ResponseEntity<>(userResponse, HttpStatus.OK);
         } catch (Exception e) {
             e.printStackTrace();
@@ -44,7 +41,6 @@ public class UserController {
                 return new ResponseEntity<>(null, HttpStatus.CONFLICT);
             }
             UserResponse userResponse = userService.createUser(userDto);
-            userResponse.setToken(jwtConfig.generateToken(userDto.getEmail()));
             return new ResponseEntity<>(userResponse, HttpStatus.OK);
         } catch (Exception e) {
             e.printStackTrace();

@@ -4,14 +4,12 @@ import type { PayloadAction } from "@reduxjs/toolkit";
 interface UserState {
   isAuthenticated: boolean;
   userInfo: UserInfo | null;
-  isAdmin: boolean;
   isBootstrapping: boolean;
 }
 
 const initialState: UserState = {
   isAuthenticated: false,
   userInfo: null,
-  isAdmin: false,
   isBootstrapping: true,
 };
 
@@ -20,8 +18,12 @@ export interface UserInfo {
     firstName: string;
     lastName: string;
     email: string;
-    token: string;
-    role?: string;
+    role: RolePermission;
+}
+
+export enum RolePermission {
+  ADMIN = 'ADMIN',
+  USER = 'USER',
 }
 export const userSlice = createSlice({
   name: 'user',
@@ -30,23 +32,15 @@ export const userSlice = createSlice({
     login: (state, action: PayloadAction<UserInfo>) => {
       state.isAuthenticated = true;
       state.userInfo = action.payload;
-      state.isAdmin = (state.userInfo?.role && String(state.userInfo.role).toLowerCase() === 'admin');
+      state.isBootstrapping = false;
     },
     logout: (state) => {
       state.isAuthenticated = false;
       state.userInfo = null;
-      state.isAdmin = false;
-    },
-    bootstrapUser: (state, action: PayloadAction<{ isAuthenticated: boolean; userInfo: UserInfo | null; isBootstrapping: boolean }>) => {
-      console.log("Bootstrapping user:", action.payload);
-      state.isAuthenticated = action.payload.isAuthenticated;
-      state.userInfo = action.payload.userInfo;
-      state.isBootstrapping = action.payload.isBootstrapping;
-      const u = action.payload.userInfo;
-      state.isAdmin = !!u && (u?.role && String(u.role).toLowerCase() === 'admin');
-    },
+      state.isBootstrapping = true;
+    }
   },
 });
 
-export const {login, logout, bootstrapUser} = userSlice.actions;
+export const {login, logout} = userSlice.actions;
 export default userSlice.reducer;

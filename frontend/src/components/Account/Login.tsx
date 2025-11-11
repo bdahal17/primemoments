@@ -3,7 +3,6 @@ import { useDispatch, useSelector } from "react-redux";
 import {replace, useLocation, useNavigate} from "react-router-dom";
 import {userLogin, userRegister} from "../../service/userService.ts";
 import {login} from "../../store/userSlice.ts";
-import {handleJwt} from "../../service/JWTService.ts";
 import {useAppDispatch, useAppSelector} from "../../store/hooks.ts";
 
 interface UserState {
@@ -19,6 +18,9 @@ const Login: React.FC = () => {
     const navigate = useNavigate();
     const [isLoading, setIsLoading] = useState(false); // Loading state
     const location = useLocation();
+    const user = useAppSelector((state) => state.user.userInfo);
+    const [error, setError] = useState("");
+    const [loginPage, setLoginPage] = useState(false);
 
     const [formUser, setFormUser] = useState<UserState>({
         firstName: "",
@@ -27,26 +29,29 @@ const Login: React.FC = () => {
         password: "",
     });
 
-    const [error, setError] = useState("");
-    const [loginPage, setLoginPage] = useState(false);
-
     useEffect(() => {
-        console.log("Login: isAuthenticated =", isAuthenticated);
-        if (isAuthenticated) {
+        if (isAuthenticated && user.role === "USER") {
             navigate("/account");
+        } else if (isAuthenticated && user.role === "ADMIN") {
+            navigate("/admin");
         }
     }, [isAuthenticated, navigate]);
 
     const handleLogin = async (e: React.FormEvent) => {
+        console.log("Login form submitted");
         e.preventDefault();
         setError("");
         setIsLoading(true);
         try {
-            const user = await userLogin({ email: formUser.email, password: formUser.password}); // call backend
-            await handleJwt(user);
+            const user = await userLogin({ email: formUser.email, password: formUser.password});
             dispatch(login(user));
-            console.log("user logged in:", user);
-            navigate("/admin");
+            if(user.role === "USER") {
+                navigate("/account");
+                return;
+            } else if (user.role === "ADMIN") {
+                navigate("/admin");
+                return;
+            }
         } catch (err: any) {
             console.error("Login error:", err);
             setError(err.message || "Login failed");
@@ -69,18 +74,22 @@ const Login: React.FC = () => {
         setError("");
         setIsLoading(true);
         try {
+            console.log("Register form submitted");
             const user = await userRegister({
                     email: formUser.email,
                     password: formUser.password,
                     firstName: formUser.firstName,
                     lastName: formUser.lastName,
                 });
-            console.log("user registered:", user);
-            await handleJwt(user);
             dispatch(login(user));
-            navigate("/account");
+            if(user.role === "USER") {
+                navigate("/account");
+                return;
+            } else if (user.role === "ADMIN") {
+                navigate("/admin");
+                return;
+            }
         } catch (err: any) {
-            console.error("Login error:", err);
             setError(err.message || "Login failed");
         }
         finally {

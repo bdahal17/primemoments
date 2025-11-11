@@ -1,5 +1,8 @@
 package com.planner.backend.config;
 
+import com.planner.backend.DTO.UserResponse;
+import com.planner.backend.entity.Role;
+import com.planner.backend.entity.UserProfile;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
@@ -16,6 +19,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 import java.util.function.Function;
 
 @Configuration
@@ -33,8 +37,13 @@ public class JWTConfig {
     /**
      * Generate token with default claims (username only)
      */
-    public String generateToken(String username) {
+    public String generateToken(UserProfile user) {
         Map<String, Object> claims = new HashMap<>();
+        claims.put("ROLES", user.getRoles());
+        claims.put("FIRST_NAME", user.getFirstName());
+        claims.put("LAST_NAME", user.getLastName());
+        String username = user.getEmail();
+        claims.put("EMAIL", username);
         return createToken(claims, username);
     }
 
