@@ -32,8 +32,12 @@ async function request<T>(url: string, options?: RequestInit): Promise<T> {
     });
 
     if (!res.ok) {
-        const err = await res.json().catch(() => ({}));
-        throw new Error(err.message || "API request failed");
+        let errMsg = "API request failed";
+        try {
+            const err = await res.json();
+            errMsg = err.message ?? errMsg;
+        } catch (_) {}
+        throw new Error(errMsg);
     }
     return res.json();
 }
