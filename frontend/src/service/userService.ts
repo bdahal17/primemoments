@@ -72,7 +72,7 @@ export async function userRegister(payload: RegisterPayload): Promise<UserInfo> 
 
 export async function fetchUser(token: string): Promise<UserInfo> {
     try {
-        const response: UserResponse = await request<UserResponse>("/user/me", {
+        const response: UserResponse = await request<UserResponse>("/auth/me", {
             headers: {
                 Authorization: `Bearer ${token}`,
             },
