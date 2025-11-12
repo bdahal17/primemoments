@@ -1,11 +1,16 @@
 import {ChevronRight} from "lucide-react";
 import React from "react";
+import {useLocation, useNavigate} from "react-router-dom";
 
 interface HeroSectionProps {
     setShowPlanningModal: (show: boolean) => void;
     setShowGalleryModal: (show: boolean) => void;
 }
 const HeroSection = ({ setShowGalleryModal, setShowPlanningModal }) => {
+
+    const navigate = useNavigate();
+    const location = useLocation();
+
     return (
         <section id={"home"} className="relative h-screen flex items-center justify-center">
             <div className="absolute inset-0 bg-gradient-to-br from-rose-500 via-purple-500 to-indigo-600">
@@ -25,7 +30,9 @@ const HeroSection = ({ setShowGalleryModal, setShowPlanningModal }) => {
                 </p>
                 <div className="flex flex-col sm:flex-row gap-4 justify-center">
                     <button
-                        onClick={() => setShowPlanningModal(true)}
+                        onClick={() =>
+                            navigate('/login', { state: { from: location.pathname } })
+                        }
                         className="bg-white text-rose-600 px-8 py-4 rounded-full font-semibold text-lg hover:bg-rose-50 transition-all transform hover:scale-105 shadow-xl"
                     >
                         Start Planning

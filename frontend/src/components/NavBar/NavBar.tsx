@@ -3,7 +3,8 @@ import {Menu, Sparkles, X} from "lucide-react";
 import Navigation from "./Navigation.tsx";
 import {useNavigate} from "react-router-dom";
 import React from "react";
-import {useAppSelector} from "../../store/hooks.ts";
+import {useAppDispatch, useAppSelector} from "../../store/hooks.ts";
+import {logout} from "../../store/userSlice.ts";
 
 interface NavBarProps {
     scrolled: boolean;
@@ -17,6 +18,7 @@ const NavBar: React.FC<NavBarProps> = ({ scrolled, setShowContactModal, setShowG
   const user = useAppSelector((state) => state.user.isAuthenticated);
   const navigate = useNavigate();
   const isBootstrapping = useAppSelector((state) => state.user.isBootstrapping);
+  const dispatch = useAppDispatch();
   return (
       <nav
           style={{
@@ -40,13 +42,13 @@ const NavBar: React.FC<NavBarProps> = ({ scrolled, setShowContactModal, setShowG
                         GG Decor
                       </span>
                   </div>
-                  {location.pathname === '/' && (<Navigation
+                  {(location.pathname === '/login' || location.pathname === '/') && (<Navigation
                       scrolled={scrolled}
                       setShowContactModal={setShowContactModal}
                       setShowGalleryModal={setShowGalleryModal}
                   />
                   )}
-                  {location.pathname === '/' && (<button
+                  {(location.pathname === '/login' || location.pathname === '/') && (<button
                       className="md:hidden"
                       onClick={() => setIsMenuOpen(!isMenuOpen)}
                   >
@@ -56,7 +58,7 @@ const NavBar: React.FC<NavBarProps> = ({ scrolled, setShowContactModal, setShowG
                           <Menu className={scrolled ? 'text-gray-900' : 'text-white'}/>
                       )}
                   </button>)}
-                  {location.pathname === '/' && (<button
+                  {(location.pathname === '/login' || location.pathname === '/') && (<button
                       onClick={() => {
                           if (!user) {
                               navigate('/login');
@@ -67,6 +69,14 @@ const NavBar: React.FC<NavBarProps> = ({ scrolled, setShowContactModal, setShowG
                   >
                       {user ? ('Account') : ('Login')}
                   </button>
+                  )}
+                  {(location.pathname === '/account' || location.pathname === '/admin') && (<button
+                          onClick={() => {
+                              dispatch(logout());
+                          }}
+                      >
+                          Logout
+                      </button>
                   )}
               </div>
           </div>

@@ -23,7 +23,6 @@ const RequireAuth: React.FC<RequireAuthProps> = ({ children, requiredRole }: Req
 
     if(!jwtToken || jwtToken && isTokenExpired(jwtToken)) {
         dispatch(logout());
-        localStorage.removeItem("jwt");
         return <Navigate to="/login" state={{ from: location }} replace />;
     }
 
@@ -37,6 +36,7 @@ const RequireAuth: React.FC<RequireAuthProps> = ({ children, requiredRole }: Req
     }
 
     if (requiredRole && userInfo?.role !== requiredRole) {
+        console.log("RequireAuth - Insufficient role. Redirecting based on user role:", userInfo?.role);
         switch (userInfo.role) {
             case RolePermission.ADMIN:
                 return <Navigate to="/admin" state={{ from: location }} replace />;

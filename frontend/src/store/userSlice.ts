@@ -35,6 +35,7 @@ export const userSlice = createSlice({
       state.isBootstrapping = false;
     },
     logout: (state) => {
+      localStorage.removeItem("jwt");
       state.isAuthenticated = false;
       state.userInfo = null;
       state.isBootstrapping = true;

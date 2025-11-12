@@ -1,30 +1,51 @@
-import React from "react";
-import {logout} from "../../store/userSlice.ts";
-import {useNavigate} from "react-router-dom";
+import React, {useState} from "react";
 import {useAppDispatch, useAppSelector} from "../../store/hooks.ts";
+import StepperModal from "../EventPlannerStepper/StepperModal.tsx";
 
 const Account: React.FC = () => {
-
     const dispatch = useAppDispatch();
+    const { userInfo } = useAppSelector((state) => state.user);
+    const [isEventModalOpen, setIsEventModalOpen] = useState(false);
 
-    const user = useAppSelector((state) => state.user.userInfo);
-    const navigate = useNavigate();
 
     return (
-        <div>
-            <h1>Hello {user.firstName} {user.lastName}, Welcome to the Account Page</h1>
-            <p>Your email: {user.email}</p>
-            <p>This is a placeholder for the Account component.</p>
-            <button
-                onClick={() => {
-                    localStorage.removeItem("jwt");
-                    localStorage.removeItem("authTokenExpiry")
-                    dispatch(logout());
-                }}
-            >
-                logout
-            </button>
+        <div className="admin-dashboard p-6">
+            <div className="admin-header mb-6">
+                <h1 className="text-2xl font-semibold">Dashboard</h1>
+                <p className="text-sm text-gray-600">Welcome back, {userInfo?.firstName || "User"}!</p>
+            </div>
+
+
+            <div className="admin-content grid gap-6 md:grid-cols-2">
+                <div className="admin-card rounded-lg border p-6">
+                    <h2 className="mb-2 text-xl font-medium">Past Events</h2>
+                    <p className="mb-4 text-sm text-gray-500">Manage all events in the system</p>
+                    <div className="flex gap-3">
+                        <button
+                            className="admin-btn rounded-md bg-indigo-600 px-4 py-2 text-white"
+                            onClick={() => setIsEventModalOpen(true)}
+                        >
+                            Schedule Event
+                        </button>
+                    </div>
+                </div>
+
+
+                <div className="admin-card rounded-lg border p-6">
+                    <h2 className="mb-2 text-xl font-medium">Settings</h2>
+                    <p className="mb-4 text-sm text-gray-500">Configure system settings</p>
+                    <button className="admin-btn rounded-md border px-4 py-2">View Settings</button>
+                </div>
+            </div>
+
+
+            <StepperModal
+                onClose={() => setIsEventModalOpen(false)}
+                userFirstName={userInfo?.firstName}
+            />
         </div>
     );
 };
+
+
 export default Account;

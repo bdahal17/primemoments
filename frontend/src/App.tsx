@@ -27,7 +27,6 @@ function App() {
         const token = localStorage.getItem("jwt");
         if (!token || token && isTokenExpired(token)) {
             dispatch(logout());
-            localStorage.removeItem("jwt");
             return;
         }
         if(!isAuthenticated) {
@@ -37,7 +36,6 @@ function App() {
                     const user = await fetchUser(token);
                     dispatch(login(user));
                 } catch (err) {
-                    localStorage.removeItem("jwt");
                     dispatch(logout());
                 }
             })();

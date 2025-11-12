@@ -20,7 +20,7 @@ const Login: React.FC = () => {
     const location = useLocation();
     const user = useAppSelector((state) => state.user.userInfo);
     const [error, setError] = useState("");
-    const [loginPage, setLoginPage] = useState(false);
+    const [loginPage, setLoginPage] = useState(true);
 
     const [formUser, setFormUser] = useState<UserState>({
         firstName: "",
@@ -44,6 +44,7 @@ const Login: React.FC = () => {
         setIsLoading(true);
         try {
             const user = await userLogin({ email: formUser.email, password: formUser.password});
+            console.log("Login successful:", user);
             dispatch(login(user));
             if(user.role === "USER") {
                 navigate("/account");

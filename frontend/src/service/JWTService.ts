@@ -3,9 +3,15 @@ import type {UserInfo} from "../store/userSlice.ts";
 import {RolePermission} from "../store/userSlice.ts";
 import { jwtDecode } from "jwt-decode";
 
+export interface Role {
+    id: number;
+    name: string;
+    description: string;
+}
+
 export interface JwtPayload {
     sub: string;
-    ROLES: string[];
+    ROLES: Role[];
     FIRST_NAME: string;
     LAST_NAME: string;
     EMAIL: string;
@@ -24,7 +30,7 @@ export async function handleJwt(user: UserResponse): Promise<UserInfo> {
             firstName: decodeToken(user.token)?.FIRST_NAME || '',
             lastName: decodeToken(user.token)?.LAST_NAME || '',
             email: decodeToken(user.token)?.EMAIL || '',
-            role: decodeToken(user.token)?.ROLES.includes(RolePermission.ADMIN) ? RolePermission.ADMIN : RolePermission.USER,
+            role: decodeToken(user.token)?.ROLES?.some((role) => role.name === RolePermission.ADMIN) ? RolePermission.ADMIN : RolePermission.USER,
         }
     } catch (error) {
         throw error;
