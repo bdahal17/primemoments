@@ -37,8 +37,10 @@ const Features: React.FC<FeaturesProps> = ({}: FeaturesProps) => {
                     </div>
 
                     <div className="relative">
-                        <div className="aspect-square rounded-3xl bg-black to-indigo-400 shadow-2xl transform rotate-3 hover:rotate-0 transition-transform duration-500"></div>
-                        <div className="absolute inset-4 rounded-3xl bg-white shadow-xl flex items-center justify-center">
+                        <div
+                            className="aspect-square rounded-3xl bg-gradient-to-br from-rose-400 via-purple-400 to-indigo-400 shadow-2xl transform rotate-3 hover:rotate-0 transition-transform duration-500"></div>
+                        <div
+                            className="absolute inset-4 rounded-3xl bg-white shadow-xl flex items-center justify-center">
                             <div className="text-center p-8">
                                 <div
                                     className="text-6xl font-bold text-transparent bg-gradient-to-br from-rose-500 to-purple-500 bg-clip-text mb-4">
