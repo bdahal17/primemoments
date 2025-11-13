@@ -37,7 +37,7 @@ const Features: React.FC<FeaturesProps> = ({}: FeaturesProps) => {
                     </div>
 
                     <div className="relative">
-                        <div className="aspect-square rounded-3xl bg-black to-indigo-400 shadow-2xl transform rotate-3 hover:rotate-0 transition-transform duration-500"></div>
+                        <div className="aspect-square rounded-3xl bg-black shadow-2xl transform rotate-3 hover:rotate-0 transition-transform duration-500"></div>
                         <div className="absolute inset-4 rounded-3xl bg-white shadow-xl flex items-center justify-center">
                             <div className="text-center p-8">
                                 <div

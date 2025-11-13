@@ -29,7 +29,7 @@ const HeroSection = ({ setShowGalleryModal, setShowPlanningModal }) => {
                 <h1 className="text-5xl md:text-7xl font-bold text-white mb-6 leading-tight">
                     Creating Unforgettable
                     <span className="block mt-2 bg-gradient-to-r from-rose-200 to-purple-200 bg-clip-text text-transparent">
-                      Moments That Last
+                        Moments That Last
                     </span>
                 </h1>
                 <p className="text-xl md:text-2xl text-white mb-8 opacity-90">

@@ -85,7 +85,7 @@ const StepperModal: React.FC<{
     };
 
     return (
-        <div className="pt-6">
+        <div className={`pt-6`}>
             <div className="w-full rounded-xl bg-white">
                 <div className="flex items-center justify-between border-b px-6 py-4">
                     <div>

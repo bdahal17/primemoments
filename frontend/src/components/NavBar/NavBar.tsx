@@ -1,7 +1,7 @@
 import {useSelector} from "react-redux";
 import {Menu, Sparkles, X} from "lucide-react";
 import Navigation from "./Navigation.tsx";
-import {useLocation, useNavigate} from "react-router-dom";
+import {useNavigate} from "react-router-dom";
 import React from "react";
 import {useAppDispatch, useAppSelector} from "../../store/hooks.ts";
 import {logout} from "../../store/userSlice.ts";
@@ -19,7 +19,6 @@ const NavBar: React.FC<NavBarProps> = ({ scrolled, setShowContactModal, setShowG
   const navigate = useNavigate();
   const isBootstrapping = useAppSelector((state) => state.user.isBootstrapping);
   const dispatch = useAppDispatch();
-  const location = useLocation();
   return (
       <nav
           style={{
@@ -27,9 +26,7 @@ const NavBar: React.FC<NavBarProps> = ({ scrolled, setShowContactModal, setShowG
               top: 0,
               left: 0,
           }}
-          className={`
-          fixed w-full z-50 transition-all duration-300 
-          ${location.pathname === "/account" ? 'bg-black shadow-md py-2' : scrolled ? 'bg-black shadow-md py-2' : 'bg-transparent py-4'}`}
+          className={`fixed w-full z-50 transition-all duration-300 ${scrolled ? 'bg-white shadow-md py-4' : 'bg-gradient-to-r bg-black py-6'}`}
       >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
               <div className="flex justify-between items-center">
@@ -41,7 +38,7 @@ const NavBar: React.FC<NavBarProps> = ({ scrolled, setShowContactModal, setShowG
                       }}
                     >
                       <Sparkles className={`h-8 w-8 ${scrolled ? 'text-rose-500' : 'text-white'}`}/>
-                      <span className={`text-2xl font-bold text-white`}>
+                      <span className={`text-2xl font-bold ${scrolled ? 'text-gray-900' : 'text-white'}`}>
                         GG Decor
                       </span>
                   </div>
@@ -52,36 +49,33 @@ const NavBar: React.FC<NavBarProps> = ({ scrolled, setShowContactModal, setShowG
                   />
                   )}
                   {(location.pathname === '/login' || location.pathname === '/') && (<button
-                      className="md:hidden bg-black text-black"
+
+                      className="md:hidden bg-transparent"
                       onClick={() => setIsMenuOpen(!isMenuOpen)}
                   >
                       {isMenuOpen ? (
-                          <X/>
+                          <X className={scrolled ? 'text-gray-900' : 'text-white'}/>
                       ) : (
-                          <Menu/>
+                          <Menu className={scrolled ? 'text-gray-900' : 'text-white'}/>
                       )}
                   </button>)}
-                  {(location.pathname === '/login' || location.pathname === '/') && (<button
-                          style={{
-                                backgroundColor: 'black',
-                                color: 'white'
+                  {(location.pathname === '/login' || location.pathname === '/') && (
+                      <button
+                          className={`bg-black`}
+                          onClick={() => {
+                              if (!user) {
+                                  navigate('/login');
+                              } else if (user) {
+                                  navigate('/account');
+                              }
                           }}
-                      onClick={() => {
-                          if (!user) {
-                              navigate('/login');
-                          } else if (user) {
-                              navigate('/account');
-                          }
-                      }}
-                  >
+                      >
                       {user ? ('Account') : ('Login')}
-                  </button>
+                      </button>
                   )}
-                  {(location.pathname === '/account' || location.pathname === '/admin') && (<button
-                          style={{
-                              backgroundColor: 'black',
-                              color: 'white'
-                          }}
+                  {(location.pathname === '/account' || location.pathname === '/admin') && (
+                      <button
+                          className={`bg-black`}
                           onClick={() => {
                               dispatch(logout());
                           }}
