@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import {Star} from "lucide-react";
+import {CheckCircle, Star} from "lucide-react";
 interface TestimonialProps {
 
 }
@@ -34,54 +34,82 @@ const Testimonial: React.FC<TestimonialProps> = ({}: TestimonialProps) => {
         }, 5000);
         return () => clearInterval(interval);
     }, []);
-  return (
-      <section className="py-24 px-4 bg-white">
-          <div className="max-w-4xl mx-auto">
-              <div className="text-center mb-16">
-                  <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
-                      What Our Clients Say
-                  </h2>
-                  <p className="text-xl text-gray-600">
-                      Real stories from real celebrations
-                  </p>
-              </div>
+    const features = [
+        "All-inclusive packages",
+        "Customized planning",
+        "Experienced coordinators",
+        "Stunning venues",
+        "Vendor management",
+        "Day-of coordination"
+    ];
 
-              <div className="relative">
-                  <div className="bg-gradient-to-br bg-black rounded-3xl p-12 shadow-xl">
-                      <div className="flex justify-center mb-4">
-                          {[...Array(testimonials[activeTestimonial].rating)].map((_, i) => (
-                              <Star key={i} className="h-6 w-6 text-yellow-400 fill-current"/>
-                          ))}
-                      </div>
-                      <p className="text-xl text-gray-200 mb-6 italic leading-relaxed text-center">
-                          "{testimonials[activeTestimonial].text}"
-                      </p>
-                      <div className="text-center">
-                          <p className="font-bold text-gray-200 text-lg">
-                              {testimonials[activeTestimonial].name}
-                          </p>
-                          <p className="text-rose-500">
-                              {testimonials[activeTestimonial].role}
-                          </p>
-                      </div>
-                  </div>
+    return (
+        <section
+            id={"about"}
+            className="py-24 px-4 bg-gradient-to-br from-rose-50 via-purple-50 to-indigo-50"
+        >
+            <div className="max-w-7xl mx-auto">
+                <div className="grid md:grid-cols-2 gap-12 items-center">
+                    <div className="relative">
+                        <div
+                            className="aspect-square rounded-3xl bg-black shadow-2xl transform rotate-3 hover:rotate-0 transition-transform duration-500"
+                            style={{
+                                backgroundImage: 'url("img-1.jpg")',
+                                backgroundSize: 'cover',
+                                backgroundPosition: 'center',
+                            }}
+                        ></div>
+                        <div
+                            className="absolute inset-4 rounded-3xl bg-white shadow-xl flex items-center justify-center"
+                            style={{
+                                backgroundImage: 'url("img-1.jpg")',
+                                backgroundSize: 'cover',
+                                backgroundPosition: 'center',
+                            }}
+                        >
+                            <div className="text-center p-8">
+                                <div
+                                    className="text-6xl font-bold text-transparent bg-gradient-to-br from-rose-500 to-purple-500 bg-clip-text mb-4">
+                                    {/*10+*/}
+                                </div>
+                                {/*<p className="text-xl font-semibold text-gray-700">Years of Excellence</p>*/}
+                                {/*<p className="text-gray-600 mt-2">Creating unforgettable moments</p>*/}
+                            </div>
+                        </div>
+                    </div>
+                    <div>
+                        <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6">
+                            What Our Clients Say
+                        </h2>
+                        {/*<p className="text-xl text-gray-600 mb-8">*/}
+                        {/*    We handle every detail with precision and creativity, ensuring your event is flawlessly*/}
+                        {/*    executed from start to finish.*/}
+                        {/*</p>*/}
 
-                  <div className="flex justify-center mt-8 space-x-2">
-                      {testimonials.map((_, index) => (
-                          <button
-                              key={index}
-                              onClick={() => setActiveTestimonial(index)}
-                              className={`w-3 h-3 rounded-full transition-all ${
-                                  index === activeTestimonial
-                                      ? 'bg-rose-500 w-8'
-                                      : 'bg-gray-300 hover:bg-gray-400'
-                              }`}
-                          />
-                      ))}
-                  </div>
-              </div>
-          </div>
-      </section>
-  );
+                        <p className="text-xl text-black-200 mb-6 italic leading-relaxed text-center">
+                            "{testimonials[activeTestimonial].text}"
+                        </p>
+                        <div className="text-center">
+                            <p className="font-bold text-black-200 text-lg">
+                                {testimonials[activeTestimonial].name}
+                            </p>
+                            <p className="text-rose-500">
+                                {testimonials[activeTestimonial].role}
+                            </p>
+                        </div>
+                        {/*<div className="grid grid-cols-2 gap-4">*/}
+                        {/*    {features.map((feature, index) => (*/}
+                        {/*        <div key={index} className="flex items-center space-x-2">*/}
+                        {/*            <CheckCircle className="h-6 w-6 text-rose-500 flex-shrink-0"/>*/}
+                        {/*            <span className="text-gray-700 font-medium">{feature}</span>*/}
+                        {/*        </div>*/}
+                        {/*    ))}*/}
+                        {/*</div>*/}
+                    </div>
+
+                </div>
+            </div>
+        </section>
+    )
 }
 export default Testimonial;

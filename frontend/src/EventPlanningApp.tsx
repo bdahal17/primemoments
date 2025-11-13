@@ -15,6 +15,7 @@ import Testimonial from "./components/Testimonial/Testimonial.tsx";
 import Features from "./components/Features/Features.tsx";
 import Cta from "./components/CTA/Cta.tsx";
 import {useAppSelector} from "./store/hooks.ts";
+import About from "./components/About/About.tsx";
 
 interface EventPlanningAppProps {
   setShowContactModal: (show: boolean) => void;
@@ -51,13 +52,9 @@ const EventPlanningApp: React.FC<EventPlanningAppProps> = ({
 
       {/* Services Section */}
       <ServiceSection/>
-
-      {/* Features Section */}
-      <Features/>
-
-      {/* Testimonials Section */}
+      <About/>
       <Testimonial/>
-
+      <Features/>
       {/* CTA Section */}
       <Cta setShowContactModal={setShowContactModal}/>
 

@@ -6,7 +6,13 @@ interface CtaProps {
 const Cta: React.FC<CtaProps> = ({ setShowContactModal }: CtaProps) => {
     return (
         <section
-            className="py-24 px-4 bg-gradient-to-br bg-black relative overflow-hidden">
+            className="py-24 px-4 bg-gradient-to-br bg-black relative overflow-hidden"
+            // style={{
+            //     backgroundImage: 'url("/image3.jpg")',
+            //     // backgroundSize: 'cover',
+            //     backgroundPosition: 'center',
+            // }}
+        >
             <div className="absolute inset-0 opacity-10">
                 <div
                     className="absolute top-0 left-0 w-96 h-96 bg-white rounded-full -translate-x-1/2 -translate-y-1/2"></div>

@@ -1,9 +1,7 @@
-import React from 'react';
 import {CheckCircle} from "lucide-react";
-interface FeaturesProps {
+import React from "react";
 
-}
-const Features: React.FC<FeaturesProps> = ({}: FeaturesProps) => {
+const About: React.FC = () => {
 
     const features = [
         "All-inclusive packages",
@@ -23,20 +21,20 @@ const Features: React.FC<FeaturesProps> = ({}: FeaturesProps) => {
                 <div className="grid md:grid-cols-2 gap-12 items-center">
                     <div>
                         <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6">
-                            Why Choose Us
+                            Who We Are
                         </h2>
                         <p className="text-xl text-gray-600 mb-8">
-                            We handle every detail with precision and creativity, ensuring your event is flawlessly
-                            executed from start to finish.
+                            At GG Decor, we bring the beauty of Nepali traditions to life through elegant and meaningful event design. Based in Columbus, Ohio, we specialize in Nepali weddings, cultural events, and birthdays, blending heritage and creativity to create unforgettable celebrations filled with color, joy, and lasting memories.
+
                         </p>
-                        <div className="grid grid-cols-2 gap-4">
-                            {features.map((feature, index) => (
-                                <div key={index} className="flex items-center space-x-2">
-                                    <CheckCircle className="h-6 w-6 text-rose-500 flex-shrink-0"/>
-                                    <span className="text-gray-700 font-medium">{feature}</span>
-                                </div>
-                            ))}
-                        </div>
+                        {/*<div className="grid grid-cols-2 gap-4">*/}
+                        {/*    {features.map((feature, index) => (*/}
+                        {/*        <div key={index} className="flex items-center space-x-2">*/}
+                        {/*            <CheckCircle className="h-6 w-6 text-rose-500 flex-shrink-0"/>*/}
+                        {/*            <span className="text-gray-700 font-medium">{feature}</span>*/}
+                        {/*        </div>*/}
+                        {/*    ))}*/}
+                        {/*</div>*/}
                     </div>
 
                     <div className="relative">
@@ -51,7 +49,7 @@ const Features: React.FC<FeaturesProps> = ({}: FeaturesProps) => {
                         <div
                             className="absolute inset-4 rounded-3xl bg-white shadow-xl flex items-center justify-center"
                             style={{
-                                backgroundImage: 'url("img-3.jpg")',
+                                backgroundImage: 'url("image3.jpg")',
                                 backgroundSize: 'cover',
                                 backgroundPosition: 'center',
                             }}
@@ -69,5 +67,6 @@ const Features: React.FC<FeaturesProps> = ({}: FeaturesProps) => {
             </div>
         </section>
     )
+
 }
-export default Features;
+export default About;
