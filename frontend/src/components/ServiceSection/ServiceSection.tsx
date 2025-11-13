@@ -40,7 +40,7 @@ const ServiceSection: React.FC<ServiceSectionProps> = ({}: ServiceSectionProps) 
                         return (
                             <div
                                 key={index}
-                                className="group p-8 rounded-2xl bg-gradient-to-br from-rose-50 to-purple-50 hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2"
+                                className="group p-8 rounded-2xl bg-gradient-to-br hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2"
                             >
                                 <div
                                     className="bg-gradient-to-br from-rose-500 to-purple-500 w-16 h-16 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">

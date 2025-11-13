@@ -85,20 +85,12 @@ const StepperModal: React.FC<{
     };
 
     return (
-        <div style={{ border: '1px solid red', display: 'flex', justifyContent: 'center', alignItems: 'center'}}>
-            <div className="w-full max-w-3xl rounded-xl bg-white shadow-lg ring-1 ring-black/5" style={{ border: '1px solid blue', width: '100%' }}>
+        <div className="pt-6">
+            <div className="w-full rounded-xl bg-white">
                 <div className="flex items-center justify-between border-b px-6 py-4">
                     <div>
                         <h3 className="text-lg font-semibold">Schedule an Event</h3>
                         <p className="text-sm text-gray-500">A quick 3-step request form</p>
-                    </div>
-                    <div>
-                        <button
-                            onClick={handleClose}
-                            className="rounded-md px-3 py-1 text-sm text-gray-600 hover:bg-gray-100"
-                        >
-                            Close
-                        </button>
                     </div>
                 </div>
 

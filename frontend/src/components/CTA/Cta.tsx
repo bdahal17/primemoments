@@ -6,7 +6,7 @@ interface CtaProps {
 const Cta: React.FC<CtaProps> = ({ setShowContactModal }: CtaProps) => {
     return (
         <section
-            className="py-24 px-4 bg-gradient-to-br from-rose-500 via-purple-500 to-indigo-600 relative overflow-hidden">
+            className="py-24 px-4 bg-gradient-to-br bg-black overflow-hidden">
             <div className="absolute inset-0 opacity-10">
                 <div
                     className="absolute top-0 left-0 w-96 h-96 bg-white rounded-full -translate-x-1/2 -translate-y-1/2"></div>

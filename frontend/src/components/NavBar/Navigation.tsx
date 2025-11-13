@@ -13,7 +13,7 @@ const Navigation = ({ scrolled, setShowGalleryModal, setShowContactModal }: Navi
                   key={item}
                   href={`#${item.toLowerCase()}`}
                   className={`font-medium transition-colors ${
-                    scrolled ? 'text-gray-700 hover:text-rose-500' : 'text-white hover:text-rose-200'
+                    scrolled ? 'text-white hover:text-rose-500' : 'text-white hover:text-rose-200'
                   }`}
                   onClick={(e) => {
                     if (item === 'Gallery') {
