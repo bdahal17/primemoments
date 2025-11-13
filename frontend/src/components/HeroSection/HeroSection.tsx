@@ -12,18 +12,25 @@ const HeroSection = ({ setShowGalleryModal, setShowPlanningModal }) => {
     const location = useLocation();
 
     return (
-        <section id={"home"} className="relative h-screen flex items-center justify-center">
-            <div className="absolute inset-0 bg-gradient-to-br from-rose-500 via-purple-500 to-indigo-600">
+        <section
+            id={"home"}
+            className="relative h-screen flex items-center justify-center"
+            style={{
+                backgroundImage: `url('/image3.jpg')`,
+                backgroundSize: 'cover',
+                backgroundPosition: 'center',
+            }}
+        >
+            <div className="absolute inset-0">
                 <div className="absolute inset-0 bg-black opacity-40"></div>
             </div>
 
             <div className="relative z-10 text-center px-4 w-full max-w-5xl mx-auto">
                 <h1 className="text-5xl md:text-7xl font-bold text-white mb-6 leading-tight">
                     Creating Unforgettable
-                    <span
-                        className="block mt-2 bg-gradient-to-r from-rose-200 to-purple-200 bg-clip-text text-transparent">
-              Moments That Last
-            </span>
+                    <span className="block mt-2 bg-gradient-to-r from-rose-200 to-purple-200 bg-clip-text text-transparent">
+                        Moments That Last
+                    </span>
                 </h1>
                 <p className="text-xl md:text-2xl text-white mb-8 opacity-90">
                     From intimate gatherings to grand celebrations, we bring your vision to life

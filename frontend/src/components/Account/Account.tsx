@@ -10,7 +10,7 @@ const Account: React.FC = () => {
 
     return (
         <div className="admin-dashboard p-6">
-            <div className="admin-header mb-6">
+            <div className="admin-header mb-6 pt-20">
                 <h1 className="text-2xl font-semibold">Dashboard</h1>
                 <p className="text-sm text-gray-600">Welcome back, {userInfo?.firstName || "User"}!</p>
             </div>
@@ -25,7 +25,7 @@ const Account: React.FC = () => {
                             className="admin-btn rounded-md bg-indigo-600 px-4 py-2 text-white"
                             onClick={() => setIsEventModalOpen(true)}
                         >
-                            Schedule Event
+                            Event Queue
                         </button>
                     </div>
                 </div>

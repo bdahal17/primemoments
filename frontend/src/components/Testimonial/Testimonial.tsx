@@ -47,17 +47,17 @@ const Testimonial: React.FC<TestimonialProps> = ({}: TestimonialProps) => {
               </div>
 
               <div className="relative">
-                  <div className="bg-gradient-to-br from-rose-50 to-purple-50 rounded-3xl p-12 shadow-xl">
+                  <div className="bg-gradient-to-br bg-black rounded-3xl p-12 shadow-xl">
                       <div className="flex justify-center mb-4">
                           {[...Array(testimonials[activeTestimonial].rating)].map((_, i) => (
                               <Star key={i} className="h-6 w-6 text-yellow-400 fill-current"/>
                           ))}
                       </div>
-                      <p className="text-xl text-gray-700 mb-6 italic leading-relaxed text-center">
+                      <p className="text-xl text-gray-200 mb-6 italic leading-relaxed text-center">
                           "{testimonials[activeTestimonial].text}"
                       </p>
                       <div className="text-center">
-                          <p className="font-bold text-gray-900 text-lg">
+                          <p className="font-bold text-gray-200 text-lg">
                               {testimonials[activeTestimonial].name}
                           </p>
                           <p className="text-rose-500">
