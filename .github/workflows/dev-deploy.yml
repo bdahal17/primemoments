@@ -139,7 +139,7 @@ jobs:
             --output text)
           echo "DB_SECRET_ARN=$DB_SECRET_ARN" >> $GITHUB_ENV
 
-      - name: create Dockerrun.aws.json and deploy to Elastic Beanstalk
+      - name: Deploy to Elastic Beanstalk
         env:
           IMAGE_URI: ${{ steps.login-ecr.outputs.registry }}/${{ env.ECR_REPOSITORY }}:${{ env.IMAGE_TAG }}
           ECR_IMAGE: ${{ steps.login-ecr.outputs.registry }}/${{ env.ECR_REPOSITORY }}:${{ env.IMAGE_TAG }}
@@ -149,38 +149,51 @@ jobs:
           DB_NAME: ${{ env.DB_NAME }}
           DB_ENDPOINT: ${{ env.DB_ENDPOINT }}
         run: |
-          echo '{
-            "AWSEBDockerrunVersion": "1",
-            "Image": {
-              "Name": "'"$IMAGE_URI"'",
-              "Update": "true"
-            },
-            "Ports": [
-              {
-                "ContainerPort": "8080"
-              }
-            ]
-          }' > Dockerrun.aws.json
-          
-          aws s3 cp Dockerrun.aws.json s3://$EB_S3_BUCKET/Dockerrun.aws.json
-          
-          VERSION_LABEL="v-${GITHUB_SHA}"
-          aws elasticbeanstalk create-application-version \
-          --application-name $APP_NAME \
-          --version-label $VERSION_LABEL \
-          --source-bundle S3Bucket=$EB_S3_BUCKET,S3Key=Dockerrun.aws.json
-          
-          aws elasticbeanstalk update-environment \
-          --application-name $APP_NAME \
-          --environment-name $ENV_NAME \
-          --version-label $VERSION_LABEL \
-          --option-settings \
-            "Namespace=aws:elasticbeanstalk:application:environment,OptionName=DB_SECRET_ARN,Value=$DB_SECRET_ARN" \
-            "Namespace=aws:elasticbeanstalk:application:environment,OptionName=JWT_SECRET_ARN,Value=$SECRET_ARN" \
-            "Namespace=aws:elasticbeanstalk:application:environment,OptionName=AWS_REGION,Value=$AWS_REGION" \
-            "Namespace=aws:elasticbeanstalk:application:environment,OptionName=SPRING_PROFILES_ACTIVE,Value=$ENV_NAME" \
-          --region $AWS_REGION
-          
+          chmod +x deploy-ebs.sh
+          ./deploy-ebs.sh
+
+#      - name: create Dockerrun.aws.json and deploy to Elastic Beanstalk
+#        env:
+#          IMAGE_URI: ${{ steps.login-ecr.outputs.registry }}/${{ env.ECR_REPOSITORY }}:${{ env.IMAGE_TAG }}
+#          ECR_IMAGE: ${{ steps.login-ecr.outputs.registry }}/${{ env.ECR_REPOSITORY }}:${{ env.IMAGE_TAG }}
+#          EB_S3_BUCKET: primemoments-app-ebs3bucket
+#          ENV_NAME: ${{ env.ENV_NAME }}
+#          APP_NAME: ${{ env.APP_NAME }}
+#          DB_NAME: ${{ env.DB_NAME }}
+#          DB_ENDPOINT: ${{ env.DB_ENDPOINT }}
+#        run: |
+#          echo '{
+#            "AWSEBDockerrunVersion": "1",
+#            "Image": {
+#              "Name": "'"$IMAGE_URI"'",
+#              "Update": "true"
+#            },
+#            "Ports": [
+#              {
+#                "ContainerPort": "8080"
+#              }
+#            ]
+#          }' > Dockerrun.aws.json
+#
+#          aws s3 cp Dockerrun.aws.json s3://$EB_S3_BUCKET/Dockerrun.aws.json
+#
+#          VERSION_LABEL="v-${GITHUB_SHA}"
+#          aws elasticbeanstalk create-application-version \
+#          --application-name $APP_NAME \
+#          --version-label $VERSION_LABEL \
+#          --source-bundle S3Bucket=$EB_S3_BUCKET,S3Key=Dockerrun.aws.json
+#
+#          aws elasticbeanstalk update-environment \
+#          --application-name $APP_NAME \
+#          --environment-name $ENV_NAME \
+#          --version-label $VERSION_LABEL \
+#          --option-settings \
+#            "Namespace=aws:elasticbeanstalk:application:environment,OptionName=DB_SECRET_ARN,Value=$DB_SECRET_ARN" \
+#            "Namespace=aws:elasticbeanstalk:application:environment,OptionName=JWT_SECRET_ARN,Value=$SECRET_ARN" \
+#            "Namespace=aws:elasticbeanstalk:application:environment,OptionName=AWS_REGION,Value=$AWS_REGION" \
+#            "Namespace=aws:elasticbeanstalk:application:environment,OptionName=SPRING_PROFILES_ACTIVE,Value=$ENV_NAME" \
+#          --region $AWS_REGION
+
 
       - name: Print Environment URL
         run: |
