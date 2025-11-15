@@ -16,11 +16,11 @@ check_eb_environment_status() {
         --query "Environments[0].Health" \
         --output text)
 
-    echo "Current Environment Status: $ENV_STATUS"
-    echo "Current Environment Health: $ENV_HEALTH"
+    echo "@1 Current Environment Status: $ENV_STATUS"
+    echo "@1 Current Environment Health: $ENV_HEALTH"
 
     # Check for invalid states
-    if [[ "$ENV_STATUS" == "Terminated" ]] ||
+    if [[ "$ENV_STATUS" == "Updating" ]] ||
        [[ "$ENV_STATUS" == "Terminating" ]] ||
        [[ "$ENV_HEALTH" == "Red" ]]; then
         return 1
@@ -36,7 +36,8 @@ cleanup_and_recreate_environment() {
     # Terminate the existing environment
     aws elasticbeanstalk terminate-environment \
         --environment-name "$ENV_NAME" \
-        --region "$AWS_REGION"
+        --region "$AWS_REGION" \
+        --force--terminate
 
     # Wait for environment to be fully terminated
     aws elasticbeanstalk wait environment-terminated \
@@ -93,6 +94,21 @@ main() {
       "Namespace=aws:elasticbeanstalk:application:environment,OptionName=AWS_REGION,Value=$AWS_REGION" \
       "Namespace=aws:elasticbeanstalk:application:environment,OptionName=SPRING_PROFILES_ACTIVE,Value=$ENV_NAME" \
     --region $AWS_REGION
+
+    ENV_STATUS=$(aws elasticbeanstalk describe-environments \
+        --application-name "$APP_NAME" \
+        --environment-names "$ENV_NAME" \
+        --query "Environments[0].Status" \
+        --output text)
+
+    ENV_HEALTH=$(aws elasticbeanstalk describe-environments \
+        --application-name "$APP_NAME" \
+        --environment-names "$ENV_NAME" \
+        --query "Environments[0].Health" \
+        --output text)
+
+    echo "@2 Current Environment Status: $ENV_STATUS"
+    echo "@2 Current Environment Health: $ENV_HEALTH"
 }
 
 # Run the main function
