@@ -16,7 +16,7 @@ const HeroSection = ({ setShowGalleryModal, setShowPlanningModal }) => {
             id={"home"}
             className="relative h-screen flex items-center justify-center"
             style={{
-                backgroundImage: `url('/img-4.jpg')`,
+                backgroundImage: `url('src/assets/img-4.jpg')`,
                 backgroundSize: 'cover',
                 backgroundPosition: 'center',
             }}

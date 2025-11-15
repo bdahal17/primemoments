@@ -7,11 +7,6 @@ const Cta: React.FC<CtaProps> = ({ setShowContactModal }: CtaProps) => {
     return (
         <section
             className="py-24 px-4 bg-gradient-to-br bg-black relative overflow-hidden"
-            // style={{
-            //     backgroundImage: 'url("/image3.jpg")',
-            //     // backgroundSize: 'cover',
-            //     backgroundPosition: 'center',
-            // }}
         >
             <div className="absolute inset-0 opacity-10">
                 <div

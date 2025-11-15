@@ -41,7 +41,7 @@ const About: React.FC = () => {
                         <div
                             className="aspect-square rounded-3xl bg-black shadow-2xl transform rotate-3 hover:rotate-0 transition-transform duration-500"
                             style={{
-                                backgroundImage: 'url("img-1.jpg")',
+                                backgroundImage: 'url("src/assets/img-1.jpg")',
                                 backgroundSize: 'cover',
                                 backgroundPosition: 'center',
                             }}
@@ -49,7 +49,7 @@ const About: React.FC = () => {
                         <div
                             className="absolute inset-4 rounded-3xl bg-white shadow-xl flex items-center justify-center"
                             style={{
-                                backgroundImage: 'url("image3.jpg")',
+                                backgroundImage: 'url("src/assets/image3.jpg")',
                                 backgroundSize: 'cover',
                                 backgroundPosition: 'center',
                             }}
