@@ -7,7 +7,6 @@ interface HeroSectionProps {
     setShowGalleryModal: (show: boolean) => void;
 }
 const HeroSection = ({ setShowGalleryModal, setShowPlanningModal }) => {
-
     const navigate = useNavigate();
     const location = useLocation();
 
