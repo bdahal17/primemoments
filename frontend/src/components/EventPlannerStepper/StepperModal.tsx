@@ -26,7 +26,7 @@ const StepperModal: React.FC<{
 }> = ({ onClose, userFirstName }) => {
     const [step, setStep] = useState<number>(0);
     const [selectedService, setSelectedService] = useState<ServiceKey | null>(null);
-    const [date, setDate] = useState<string>("");
+    const [eventDate, setEventDate] = useState<string>("");
     const [time, setTime] = useState<string>("");
     const [details, setDetails] = useState({
         eventName: "",
@@ -41,7 +41,7 @@ const StepperModal: React.FC<{
     const reset = () => {
         setStep(0);
         setSelectedService(null);
-        setDate("");
+        setEventDate("");
         setTime("");
         setDetails({ eventName: "", contactPhone: "", guests: "", venue: "", notes: "" });
         setSubmitting(false);
@@ -54,15 +54,15 @@ const StepperModal: React.FC<{
     };
 
     const canProceedToDate = selectedService !== null;
-    const canProceedToDetails = date.trim() !== "";
+    const canProceedToDetails = eventDate.trim() !== "";
 
     const handleSubmit = async () => {
         // Basic client-side validation
-        if (!selectedService || !date) return;
+        if (!selectedService || !eventDate) return;
         setSubmitting(true);
         const payload = {
-            service: selectedService,
-            date,
+            eventType: selectedService,
+            eventDate,
             time,
             details,
             requestedBy: userFirstName || "",
@@ -72,7 +72,13 @@ const StepperModal: React.FC<{
         try {
             // Replace this fetch with your real API endpoint
             // For demo we just wait and mark success
-            await new Promise((res) => setTimeout(res, 900));
+            await fetch("/api/events/create", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify(payload),
+            });
             console.log("Event request payload:", payload);
             setSuccess("Request submitted — our team will contact you shortly.");
             setSubmitting(false);
@@ -144,8 +150,8 @@ const StepperModal: React.FC<{
                             <div className="flex flex-col gap-3 sm:flex-row">
                                 <input
                                     type="date"
-                                    value={date}
-                                    onChange={(e) => setDate(e.target.value)}
+                                    value={eventDate}
+                                    onChange={(e) => setEventDate(e.target.value)}
                                     className="rounded-md border px-3 py-2"
                                 />
                                 <input

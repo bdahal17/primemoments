@@ -2,11 +2,11 @@ package com.planner.backend.controller;
 
 import com.planner.backend.DTO.LoginRequest;
 import com.planner.backend.DTO.UserDto;
-import com.planner.backend.DTO.UserResponse;
-import com.planner.backend.config.JWTConfig;
+import com.planner.backend.DTO.response.UserResponse;
 import com.planner.backend.service.UserService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 @RequestMapping("/api/user")
@@ -46,6 +46,11 @@ public class UserController {
             e.printStackTrace();
         }
         return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+    @GetMapping("/test")
+    public ResponseEntity<String> testEndpoint(Authentication authentication) {
+        return new ResponseEntity<>("UserController is working!" + authentication.getName(), HttpStatus.OK);
     }
 
 }

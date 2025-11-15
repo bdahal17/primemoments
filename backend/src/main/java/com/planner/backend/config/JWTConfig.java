@@ -1,7 +1,5 @@
 package com.planner.backend.config;
 
-import com.planner.backend.DTO.UserResponse;
-import com.planner.backend.entity.Role;
 import com.planner.backend.entity.UserProfile;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
@@ -12,14 +10,10 @@ import io.jsonwebtoken.UnsupportedJwtException;
 import io.jsonwebtoken.security.SignatureException;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.crypto.SecretKey;
 import java.nio.charset.StandardCharsets;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.function.Function;
 
 @Configuration
@@ -111,13 +105,13 @@ public class JWTConfig {
         return extractExpiration(token).before(new Date());
     }
 
-    /**
-     * Validate token against user details
-     */
-    public Boolean validateToken(String token, UserDetails userDetails) {
-        final String username = extractUsername(token);
-        return (username.equals(userDetails.getUsername()) && !isTokenExpired(token));
-    }
+//    /**
+//     * Validate token against user details
+//     */
+//    public Boolean validateToken(String token, UserDetails userDetails) {
+//        final String username = extractUsername(token);
+//        return (username.equals(userDetails.getUsername()) && !isTokenExpired(token));
+//    }
 
     /**
      * Validate token (basic validation without UserDetails)
@@ -161,5 +155,45 @@ public class JWTConfig {
      */
     public long getExpirationTime() {
         return jwtExpirationInMs;
+    }
+
+    public List<String> extractRoles(String token) {
+        Claims claims = extractAllClaims(token);
+        Object rolesObj = claims.get("ROLES");
+        List<String> roles = new ArrayList<>();
+
+        if (rolesObj == null) {
+            return roles;
+        }
+
+        if (rolesObj instanceof List) {
+            List<?> list = (List<?>) rolesObj;
+            for (Object item : list) {
+                if (item instanceof String) {
+                    roles.add((String) item);
+                } else if (item instanceof Map) {
+                    // case where Role was serialized into a map (e.g. {"name":"ROLE_USER"})
+                    Map<?, ?> mapItem = (Map<?, ?>) item;
+                    Object name = mapItem.get("name");
+                    if (name == null) { // try common keys
+                        name = mapItem.get("role");
+                    }
+                    if (name != null) {
+                        roles.add(name.toString());
+                    }
+                } else {
+                    // fallback to toString
+                    roles.add(item.toString());
+                }
+            }
+        } else if (rolesObj instanceof String) {
+            // single string role
+            roles.add((String) rolesObj);
+        } else {
+            // unknown shape: fallback
+            roles.add(rolesObj.toString());
+        }
+
+        return roles;
     }
 }

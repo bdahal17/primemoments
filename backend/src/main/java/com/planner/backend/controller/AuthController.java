@@ -1,6 +1,6 @@
 package com.planner.backend.controller;
 
-import com.planner.backend.DTO.UserResponse;
+import com.planner.backend.DTO.response.UserResponse;
 import com.planner.backend.config.JWTConfig;
 import com.planner.backend.service.UserService;
 import org.springframework.http.HttpStatus;

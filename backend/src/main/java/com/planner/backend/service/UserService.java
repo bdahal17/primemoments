@@ -1,21 +1,15 @@
 package com.planner.backend.service;
 
 import com.planner.backend.DTO.UserDto;
-import com.planner.backend.DTO.UserResponse;
+import com.planner.backend.DTO.response.UserResponse;
 import com.planner.backend.config.JWTConfig;
 import com.planner.backend.entity.Role;
 import com.planner.backend.entity.UserProfile;
 import com.planner.backend.repository.RoleRepository;
 import com.planner.backend.repository.UserProfileRepository;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.RequestMapping;
-
-import java.util.Set;
-import java.util.stream.Collectors;
 
 @Service
 public class UserService {

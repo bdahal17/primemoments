@@ -1,12 +1,19 @@
 package com.planner.backend.config;
 
+import io.jsonwebtoken.Claims;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
+import java.util.List;
+import java.util.stream.Collectors;
 
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
@@ -20,41 +27,36 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request,
                                     HttpServletResponse response,
                                     FilterChain filterChain) throws ServletException, IOException {
-
         String path = request.getRequestURI();
-
-        // Skip filter for static resources and public endpoints
         if (shouldSkipFilter(path)) {
             filterChain.doFilter(request, response);
             return;
         }
-
-
-        System.out.println("JwtAuthenticationFilter processing: " + path);
-
         try {
             String token = extractTokenFromRequest(request);
+            if (token != null && jwtConfig.validateToken(token)) {
+                String username = jwtConfig.extractUsername(token);
+                List<String> roles = jwtConfig.extractRoles(token);
+                List<SimpleGrantedAuthority> authorities = roles.stream()
+                        .map(SimpleGrantedAuthority::new)
+                        .collect(Collectors.toList());
 
-//            if (token != null && jwtService.validateToken(token)) {
-//                String username = jwtService.extractUsername(token);
-//                UserDetails userDetails = userDetailsService.loadUserByUsername(username);
-//
-//                if (jwtService.validateToken(token, userDetails)) {
-//                    UsernamePasswordAuthenticationToken authentication =
-//                            new UsernamePasswordAuthenticationToken(
-//                                    userDetails,
-//                                    null,
-//                                    userDetails.getAuthorities()
-//                            );
-//                    authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-//                    SecurityContextHolder.getContext().setAuthentication(authentication);
-//                }
-//            }
+                UsernamePasswordAuthenticationToken authentication =
+                        new UsernamePasswordAuthenticationToken(username, null, authorities);
+                authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+                SecurityContextHolder.getContext().setAuthentication(authentication);
+            } else {
+                response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Invalid or missing JWT token");
+                return;
+            }
+            filterChain.doFilter(request, response);
+        } catch (io.jsonwebtoken.ExpiredJwtException e) {
+            response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Token expired");
         } catch (Exception e) {
             System.err.println("JWT Authentication failed: " + e.getMessage());
+            response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "JWT authentication failed");
         }
 
-//        filterChain.doFilter(request, response);
     }
 
     private boolean shouldSkipFilter(String path) {
