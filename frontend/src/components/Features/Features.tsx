@@ -43,7 +43,7 @@ const Features: React.FC<FeaturesProps> = ({}: FeaturesProps) => {
                         <div
                             className="aspect-square rounded-3xl bg-black shadow-2xl transform rotate-3 hover:rotate-0 transition-transform duration-500"
                             style={{
-                                backgroundImage: 'url("src/assets/img-1.jpg")',
+                                backgroundImage: 'url("img-1.jpg")',
                                 backgroundSize: 'cover',
                                 backgroundPosition: 'center',
                             }}
@@ -51,7 +51,7 @@ const Features: React.FC<FeaturesProps> = ({}: FeaturesProps) => {
                         <div
                             className="absolute inset-4 rounded-3xl bg-white shadow-xl flex items-center justify-center"
                             style={{
-                                backgroundImage: 'url("src/assets/img-3.jpg")',
+                                backgroundImage: 'url("img-3.jpg")',
                                 backgroundSize: 'cover',
                                 backgroundPosition: 'center',
                             }}
