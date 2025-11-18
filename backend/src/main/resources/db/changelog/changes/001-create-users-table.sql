@@ -33,6 +33,7 @@ insert into role (name, description) values ('MODERATOR', 'User with moderation 
 
 create table location (
                          id SERIAL PRIMARY KEY,
+                         event_id INT NOT NULL,
                          FOREIGN KEY (event_id) REFERENCES event(id) ON DELETE CASCADE,
                          name VARCHAR(100) NOT NULL,
                          description TEXT,
@@ -53,6 +54,8 @@ create table event_note (
                        id SERIAL PRIMARY KEY,
                        title VARCHAR(150) NOT NULL,
                        content TEXT NOT NULL,
+                       event_id INT NOT NULL,
+                       user_profile_id INT NOT NULL,
                        FOREIGN KEY (event_id) REFERENCES event(id) ON DELETE CASCADE,
                        FOREIGN KEY (user_profile_id) REFERENCES user_profile(id) ON DELETE CASCADE,
                        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
@@ -66,6 +69,7 @@ create table event (
                        event_date TIMESTAMP NOT NULL,
                        expected_guests INT,
                        status VARCHAR(50) DEFAULT 'PENDING',
+                       user_profile_id INT NOT NULL,
                        FOREIGN KEY (user_profile_id) REFERENCES user_profile(id) ON DELETE CASCADE,
                        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
