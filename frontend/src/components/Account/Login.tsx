@@ -10,6 +10,7 @@ interface UserState {
     lastName: string;
     email: string;
     password: string;
+    confirmPassword: string;
 }
 
 const Login: React.FC = () => {
@@ -22,12 +23,27 @@ const Login: React.FC = () => {
     const [error, setError] = useState("");
     const [loginPage, setLoginPage] = useState(true);
 
+    const [passwordMatch, setPasswordMatch] = useState(true);
+
     const [formUser, setFormUser] = useState<UserState>({
         firstName: "",
         lastName: "",
         email: "",
         password: "",
+        confirmPassword: ""
     });
+
+    useEffect(() => {
+        if(formUser.password === "" || formUser.confirmPassword === "") {
+            setPasswordMatch(true);
+        } else {
+            if(formUser.password !== formUser.confirmPassword ) {
+                setPasswordMatch(false);
+            } else if (formUser.password === formUser.confirmPassword){
+                setPasswordMatch(true);
+            }
+        }
+    }, [formUser.password, formUser.confirmPassword]);
 
     useEffect(() => {
         if (isAuthenticated && user.role === "USER") {
@@ -64,6 +80,7 @@ const Login: React.FC = () => {
                      lastName: "",
                      email: "",
                      password: "",
+                    confirmPassword: ""
                 };
            })
             setIsLoading(false);
@@ -100,6 +117,7 @@ const Login: React.FC = () => {
                     lastName: "",
                     email: "",
                     password: "",
+                    confirmPassword: ""
                 };
             })
             setIsLoading(false);
@@ -158,7 +176,7 @@ const Login: React.FC = () => {
                             type="text"
                             value={formUser.firstName}
                             onChange={(e) => {
-                                setFormUser(prev => ({ ...prev, firstName: e.target.value }));
+                                setFormUser(prev => ({...prev, firstName: e.target.value}));
                             }}
                             required
                             style={{width: "100%", padding: "8px"}}
@@ -171,7 +189,7 @@ const Login: React.FC = () => {
                             type="text"
                             value={formUser.lastName}
                             onChange={(e) => {
-                                setFormUser(prev => ({ ...prev, lastName: e.target.value }));
+                                setFormUser(prev => ({...prev, lastName: e.target.value}));
                             }}
                             required
                             style={{width: "100%", padding: "8px"}}
@@ -184,7 +202,7 @@ const Login: React.FC = () => {
                             type="text"
                             value={formUser.email}
                             onChange={(e) => {
-                                setFormUser(prev => ({ ...prev, email: e.target.value }));
+                                setFormUser(prev => ({...prev, email: e.target.value}));
                             }}
                             required
                             style={{width: "100%", padding: "8px"}}
@@ -197,7 +215,20 @@ const Login: React.FC = () => {
                             type="password"
                             value={formUser.password}
                             onChange={(e) => {
-                                setFormUser(prev => ({ ...prev, password: e.target.value }));
+                                setFormUser(prev => ({...prev, password: e.target.value}));
+                            }}
+                            required
+                            style={{width: "100%", padding: "8px"}}
+                        />
+                    </div>
+                    <div style={{marginBottom: "10px"}}>
+                        <label>Confirm Password: {!passwordMatch && <span className={"text-red-600"}>Doesn't Match</span>}</label>
+                        <input
+                            className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent"
+                            type="password"
+                            value={formUser.confirmPassword}
+                            onChange={(e) => {
+                                setFormUser(prev => ({...prev, confirmPassword: e.target.value}));
                             }}
                             required
                             style={{width: "100%", padding: "8px"}}

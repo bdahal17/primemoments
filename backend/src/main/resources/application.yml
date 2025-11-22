@@ -19,3 +19,5 @@ logging:
   file:
     name: /var/log/spring-boot/application.log
     path: /var/log/spring-boot
+
+app-password: "cpdr rprz zeiy lzud"

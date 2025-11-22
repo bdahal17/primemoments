@@ -13,6 +13,7 @@ import {
 } from 'lucide-react';
 import Contact from "../Contact/Contact.tsx";
 import Modal from "../shared/Modal.tsx";
+import {sendEmail} from "../../service/emailService.ts";
 
 // Define an enum for dashboard tabs
 enum DashboardTab {
@@ -77,6 +78,15 @@ const Account: React.FC = () => {
             </span>
         );
     };
+
+    const handleEmailSubmit = async () => {
+        try {
+            await sendEmail(localStorage.getItem("jwt"), contactFormData);
+            console.log("email sent:", contactFormData);
+        } catch (error) {
+            console.error("Error sending email:", error);
+        }
+    }
 
     const renderTabContent = () => {
         switch(activeTab) {
@@ -225,6 +235,7 @@ const Account: React.FC = () => {
                                 ) : (
                                     <form onSubmit={() => {
                                         setContactFormSubmitted(true);
+                                        handleEmailSubmit();
                                     }} className="space-y-4">
                                         <div className="grid md:grid-cols-2 gap-4">
                                             <div>
