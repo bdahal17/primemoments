@@ -45,8 +45,6 @@ public class Location {
     private Double latitude;
     private Double longitude;
 
-    // capacity (optional)
-    private Integer capacity;
 
     @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;

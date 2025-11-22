@@ -35,8 +35,5 @@ public class LocationDto {
     @DecimalMin(value = "-180.0", inclusive = true, message = "Longitude must be >= -180")
     @DecimalMax(value = "180.0", inclusive = true, message = "Longitude must be <= 180")
     private Double longitude;
-
-    @Min(value = 1, message = "Capacity must be at least 1")
-    private Integer capacity;
 }
 

@@ -1,4 +1,7 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import {setEvents} from "../../store/eventSlice.ts";
+import {useAppDispatch} from "../../store/hooks.ts";
+import {createEvent, getEvents} from "../../service/eventService.ts";
 
 type ServiceKey = "WEDDING" | "BUSINESS" | "BIRTHDAY";
 
@@ -19,33 +22,68 @@ const SERVICES: { key: ServiceKey; title: string; desc: string }[] = [
         desc: "Private parties and milestone birthdays — themed planning and entertainment.",
     },
 ];
+export interface EventLocation {
+    name?: string;
+    description?: string;
+    addressLine1: string;
+    addressLine2?: string;
+    city: string;
+    state: string;
+    postalCode: string;
+    country: string;
+    latitude?: number;
+    longitude?: number;
+}
+
+export interface EventRequest {
+    eventType: ServiceKey;
+    contactNumber: string;
+    contactName: string;
+    eventDate: string;
+    time: string;
+    expectedGuests: number;
+    additionalNotes?: string;
+}
 
 const StepperModal: React.FC<{
     onClose: () => void;
     userFirstName?: string;
 }> = ({ onClose, userFirstName }) => {
     const [step, setStep] = useState<number>(0);
-    const [selectedService, setSelectedService] = useState<ServiceKey | null>(null);
-    const [eventDate, setEventDate] = useState<string>("");
-    const [time, setTime] = useState<string>("");
-    const [details, setDetails] = useState({
-        eventName: "",
-        contactPhone: "",
-        guests: "",
-        venue: "",
-        notes: "",
-    });
-    const [submitting, setSubmitting] = useState(false);
     const [success, setSuccess] = useState<string | null>(null);
+    const dispatch = useAppDispatch();
+
+    const [eventLocation, setEventLocation] = useState<EventLocation>({
+        name: "",
+        description: "",
+        addressLine1: "",
+        addressLine2: "",
+        city: "",
+        state: "",
+        postalCode: "",
+        country: "",
+        latitude: 0,
+        longitude: 0,
+    });
+
+    const [eventRequest, setEventRequest] = useState<EventRequest>({
+        eventType: "WEDDING",
+        contactNumber: "",
+        contactName: "",
+        eventDate: "",
+        time: "",
+        expectedGuests: 0,
+        additionalNotes: "",
+    });
 
     const reset = () => {
-        setStep(0);
-        setSelectedService(null);
-        setEventDate("");
-        setTime("");
-        setDetails({ eventName: "", contactPhone: "", guests: "", venue: "", notes: "" });
-        setSubmitting(false);
-        setSuccess(null);
+        // setStep(0);
+        // setSelectedService(null);
+        // setEventDate("");
+        // setTime("");
+        // setDetails({ eventName: "", contactPhone: "", guests: "", venue: "", notes: "" });
+        // setSubmitting(false);
+        // setSuccess(null);
     };
 
     const handleClose = () => {
@@ -53,39 +91,38 @@ const StepperModal: React.FC<{
         onClose();
     };
 
-    const canProceedToDate = selectedService !== null;
-    const canProceedToDetails = eventDate.trim() !== "";
+    // const canProceedToDate = selectedService !== null;
+    // const canProceedToDetails = eventDate.trim() !== "";
 
     const handleSubmit = async () => {
         // Basic client-side validation
-        if (!selectedService || !eventDate) return;
-        setSubmitting(true);
-        const payload = {
-            eventType: selectedService,
-            eventDate,
-            time,
-            details,
-            requestedBy: userFirstName || "",
-            createdAt: new Date().toISOString(),
-        };
+        // if (!selectedService || !eventDate) return;
+        // setSubmitting(true);
 
         try {
+            console.log("Event request payload:", {...eventRequest, location: eventLocation, eventDateTime: `${eventRequest.eventDate}T${eventRequest.time}:00`});
+            const token = localStorage.getItem("jwt") || "";
             // Replace this fetch with your real API endpoint
             // For demo we just wait and mark success
-            await fetch("/api/events/create", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify(payload),
-            });
-            console.log("Event request payload:", payload);
+            // await fetch("/api/event/create", {
+            //     method: "POST",
+            //     headers: {
+            //         "Content-Type": "application/json",
+            //         "Authorization": `Bearer ${token}`
+            //     },
+            //     body: JSON.stringify({...eventRequest, location: eventLocation, eventDateTime: `${eventRequest.eventDate}T${eventRequest.time}:00`}),
+            // });
+
+            await createEvent(token, {...eventRequest, location: eventLocation, eventDateTime: `${eventRequest.eventDate}T${eventRequest.time}:00`});
+
+            const events = await getEvents(token);
+            dispatch(setEvents(events)); // Trigger refresh of events in the store
             setSuccess("Request submitted — our team will contact you shortly.");
-            setSubmitting(false);
+            // setSubmitting(false);
             setStep(3); // final success step
         } catch (err) {
             console.error(err);
-            setSubmitting(false);
+            // setSubmitting(false);
             setSuccess("Failed to submit. Try again later.");
         }
     };
@@ -93,12 +130,12 @@ const StepperModal: React.FC<{
     return (
         <div className={`pt-6`}>
             <div className="w-full rounded-xl bg-white">
-                <div className="flex items-center justify-between border-b px-6 py-4">
-                    <div>
-                        <h3 className="text-lg font-semibold">Schedule an Event</h3>
-                        <p className="text-sm text-gray-500">A quick 3-step request form</p>
-                    </div>
-                </div>
+                {/*<div className="flex items-center justify-between border-b px-6 py-4">*/}
+                {/*    <div>*/}
+                {/*        <h3 className="text-lg font-semibold">Schedule an Event</h3>*/}
+                {/*        <p className="text-sm text-gray-500">A quick 3-step request form</p>*/}
+                {/*    </div>*/}
+                {/*</div>*/}
 
                 {/* Stepper indicator */}
                 <div className="flex items-center gap-4 px-6 py-4">
@@ -126,14 +163,14 @@ const StepperModal: React.FC<{
                                 <button
                                     key={s.key}
                                     onClick={() => {
-                                        setSelectedService(s.key);
+                                        setEventRequest((prev) => ({ ...prev, eventType: s.key }));
                                         setStep(1);
                                     }}
-                                    className="group rounded-lg border p-4 text-left hover:shadow-md"
+                                    className="group rounded-lg border p-4 text-left hover:shadow-md bg-indigo-600"
                                 >
-                                    <h4 className="mb-2 text-lg font-medium">{s.title}</h4>
-                                    <p className="text-sm text-gray-500">{s.desc}</p>
-                                    <div className="mt-3 text-sm text-indigo-600 group-hover:underline">Select</div>
+                                    <h4 className="mb-2 text-lg text-white font-medium">{s.title}</h4>
+                                    <p className="text-sm text-white">{s.desc}</p>
+                                    <div className="mt-3 text-sm text-white group-hover:underline">Select</div>
                                 </button>
                             ))}
                         </div>
@@ -143,21 +180,23 @@ const StepperModal: React.FC<{
                     {step === 1 && (
                         <div className="space-y-4">
                             <div>
-                                <h4 className="text-lg font-medium">{selectedService} — Pick a date</h4>
+                                <h4 className="text-lg font-medium">{eventRequest.eventType} — Pick a date</h4>
                                 <p className="text-sm text-gray-500">Choose a preferred date for your event.</p>
                             </div>
 
                             <div className="flex flex-col gap-3 sm:flex-row">
                                 <input
                                     type="date"
-                                    value={eventDate}
-                                    onChange={(e) => setEventDate(e.target.value)}
+                                    value={eventRequest.eventDate}
+                                    onChange={(e) => {
+                                        setEventRequest((prev) => ({ ...prev, eventDate: e.target.value }))
+                                    }}
                                     className="rounded-md border px-3 py-2"
                                 />
                                 <input
                                     type="time"
-                                    value={time}
-                                    onChange={(e) => setTime(e.target.value)}
+                                    value={eventRequest.time}
+                                    onChange={(e) => setEventRequest((prev) => ({ ...prev, time: e.target.value }))}
                                     className="rounded-md border px-3 py-2"
                                 />
                             </div>
@@ -170,8 +209,8 @@ const StepperModal: React.FC<{
                                     Back
                                 </button>
                                 <button
-                                    onClick={() => canProceedToDate && setStep(2)}
-                                    disabled={!canProceedToDate}
+                                    onClick={() => setStep(2)}
+                                    // disabled={!canProceedToDate}
                                     className="rounded-md bg-indigo-600 px-4 py-2 text-sm text-white disabled:opacity-50"
                                 >
                                     Next
@@ -187,31 +226,69 @@ const StepperModal: React.FC<{
 
                             <div className="grid gap-3 md:grid-cols-2">
                                 <input
-                                    placeholder="Event name"
+                                    placeholder="Contact name"
                                     className="rounded-md border px-3 py-2"
-                                    value={details.eventName}
-                                    onChange={(e) => setDetails({ ...details, eventName: e.target.value })}
+                                    value={eventRequest.contactName}
+                                    onChange={(e) => setEventRequest((prev) => ({
+                                        ...prev,
+                                        contactName: e.target.value
+                                    }))}
                                 />
 
                                 <input
                                     placeholder="Contact phone"
                                     className="rounded-md border px-3 py-2"
-                                    value={details.contactPhone}
-                                    onChange={(e) => setDetails({ ...details, contactPhone: e.target.value })}
+                                    value={eventRequest.contactNumber.toString()}
+                                    onChange={(e) => setEventRequest((prev) => ({
+                                        ...prev,
+                                        contactNumber: e.target.value
+                                    }))}
                                 />
 
                                 <input
                                     placeholder="Estimated number of guests"
                                     className="rounded-md border px-3 py-2"
-                                    value={details.guests}
-                                    onChange={(e) => setDetails({ ...details, guests: e.target.value })}
+                                    type={"number"}
+                                    value={eventRequest.expectedGuests}
+                                    onChange={(e) => setEventRequest((prev) => ({
+                                        ...prev,
+                                        expectedGuests: parseInt(e.target.value)
+                                    }))}
                                 />
 
                                 <input
-                                    placeholder="Venue / Location"
+                                    placeholder="Street Address"
                                     className="rounded-md border px-3 py-2"
-                                    value={details.venue}
-                                    onChange={(e) => setDetails({ ...details, venue: e.target.value })}
+                                    value={eventLocation.addressLine1}
+                                    onChange={(e) => setEventLocation({...eventLocation, addressLine1: e.target.value})}
+                                />
+
+                                <input
+                                    placeholder="City"
+                                    className="rounded-md border px-3 py-2"
+                                    value={eventLocation.city}
+                                    onChange={(e) => setEventLocation({...eventLocation, city: e.target.value})}
+                                />
+
+                                <input
+                                    placeholder="State"
+                                    className="rounded-md border px-3 py-2"
+                                    value={eventLocation.state}
+                                    onChange={(e) => setEventLocation({...eventLocation, state: e.target.value})}
+                                />
+
+                                <input
+                                    placeholder="Postal Code"
+                                    className="rounded-md border px-3 py-2"
+                                    value={eventLocation.postalCode}
+                                    onChange={(e) => setEventLocation({...eventLocation, postalCode: e.target.value})}
+                                />
+
+                                <input
+                                    placeholder="Country"
+                                    className="rounded-md border px-3 py-2"
+                                    value={eventLocation.country}
+                                    onChange={(e) => setEventLocation({...eventLocation, country: e.target.value})}
                                 />
                             </div>
 
@@ -219,8 +296,8 @@ const StepperModal: React.FC<{
                                 placeholder="Additional notes (vendors, preferred setup, special requests)"
                                 className="w-full rounded-md border px-3 py-2"
                                 rows={4}
-                                value={details.notes}
-                                onChange={(e) => setDetails({ ...details, notes: e.target.value })}
+                                value={eventRequest.additionalNotes}
+                                onChange={(e) => setEventRequest((prev) => ({ ...prev, additionalNotes: e.target.value }))}
                             />
 
                             <div className="flex items-center gap-3">
@@ -233,10 +310,11 @@ const StepperModal: React.FC<{
 
                                 <button
                                     onClick={handleSubmit}
-                                    disabled={submitting}
+                                    // disabled={submitting}
                                     className="rounded-md bg-indigo-600 px-4 py-2 text-sm text-white disabled:opacity-50"
                                 >
-                                    {submitting ? "Submitting..." : "Submit Request"}
+                                    {/*{submitting ? "Submitting..." : "Submit Request"}*/}
+                                    Submit Request
                                 </button>
                             </div>
                         </div>

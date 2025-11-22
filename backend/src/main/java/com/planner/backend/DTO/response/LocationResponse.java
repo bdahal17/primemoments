@@ -21,9 +21,6 @@ public class LocationResponse {
 
     private Double latitude;
     private Double longitude;
-
-    private Integer capacity;
-
     /**
      * Convenience combined address used by clients
      */

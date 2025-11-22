@@ -90,20 +90,3 @@ export async function fetchUser(token: string): Promise<UserInfo> {
         throw error;
     }
 }
-
-// Example: other API calls
-export async function getEvents(token: string) {
-    return request("/events", {
-        headers: {
-            Authorization: `Bearer ${token}`,
-        },
-    });
-}
-
-export async function createEvent(token: string, eventData: any) {
-    return request("/events", {
-        method: "POST",
-        headers: { Authorization: `Bearer ${token}` },
-        body: JSON.stringify(eventData),
-    });
-}

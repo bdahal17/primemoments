@@ -35,6 +35,8 @@ create table event (
                        id SERIAL PRIMARY KEY,
                        event_type VARCHAR(100) NOT NULL,
                        event_date TIMESTAMP NOT NULL,
+                       contact_name VARCHAR(100),
+                       contact_number VARCHAR(20),
                        expected_guests INT,
                        status VARCHAR(50) DEFAULT 'PENDING',
                        user_profile_id INT NOT NULL,
@@ -57,7 +59,6 @@ create table location (
                          country VARCHAR(100) NOT NULL,
                          latitude DECIMAL(9,6),
                          longitude DECIMAL(9,6),
-                         capacity INT,
                          created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                          updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );

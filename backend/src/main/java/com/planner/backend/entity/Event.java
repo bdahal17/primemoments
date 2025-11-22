@@ -28,6 +28,9 @@ public class Event {
     @Column(nullable = false)
     private LocalDateTime eventDate;
 
+    private String contactName;
+    private String contactNumber;
+
     private Integer expectedGuests;
 
     @Enumerated(EnumType.STRING)
