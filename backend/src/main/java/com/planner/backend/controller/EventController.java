@@ -2,6 +2,7 @@ package com.planner.backend.controller;
 
 import com.planner.backend.DTO.EventDto;
 import com.planner.backend.DTO.response.EventResponse;
+import com.planner.backend.service.EmailService;
 import com.planner.backend.service.EventService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -33,6 +34,9 @@ public class EventController {
     @GetMapping("/all")
     public ResponseEntity<List<EventResponse>> getEvents(Authentication authentication) {
         try {
+            if(authentication.getAuthorities().stream().anyMatch(role -> role.getAuthority().equals("ADMIN"))) {
+                return ResponseEntity.ok(eventService.getAllEvents());
+            }
             return ResponseEntity.ok(eventService.getEventsForUser(authentication.getName()));
         } catch (Exception e) {
             e.printStackTrace();

@@ -4,6 +4,7 @@ import javax.mail.internet.AddressException;
 import javax.mail.internet.InternetAddress;
 
 import com.planner.backend.DTO.Mail;
+import com.planner.backend.DTO.response.EventResponse;
 import com.planner.backend.controller.EmailController;
 import com.planner.backend.entity.UserProfile;
 import com.planner.backend.repository.UserProfileRepository;
