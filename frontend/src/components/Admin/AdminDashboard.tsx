@@ -25,7 +25,6 @@ const AdminDashboard = () => {
   const events = useAppSelector((state) => state.events.events);
   const [contactFormSubmitted, setContactFormSubmitted] = useState(false);
 
-
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 5;
 
@@ -47,27 +46,6 @@ const AdminDashboard = () => {
     );
   };
 
-    useEffect( () => {
-        console.log("Fetching events for user:", userInfo);
-        (async () => {
-            try {
-                const token = localStorage.getItem("jwt");
-                const allEvents = await getEvents(token);
-                dispatch(setEvents(allEvents));
-            } catch (error) {
-                console.error("Error fetching events:", error);
-            }
-        })();
-    }, []);
-
-
-
-  const data = [
-    { id: 1, name: 'Alice', age: 30 },
-    { id: 2, name: 'Bob', age: 24 },
-    { id: 3, name: 'Charlie', age: 35 },
-  ];
-
   const renderTabContent = () => {
     switch(activeTab) {
       case DashboardTab.AllEvents:
@@ -81,7 +59,6 @@ const AdminDashboard = () => {
               </div>
               <div>
                 <AdminEvents
-                    events={events}
                     renderEventStatusBadge={renderEventStatusBadge}
                     setViewDetails={setViewDetails}
                     viewDetails={viewDetails}/>

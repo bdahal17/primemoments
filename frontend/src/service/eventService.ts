@@ -37,3 +37,21 @@ export async function createEvent(token: string, eventData: any) {
     });
 }
 
+export async function approveEvent(token: string, eventId: number) {
+    return requestEvent(`/approve/${eventId}`, {
+        method: "POST",
+        headers: {
+            Authorization: `Bearer ${token}`,
+        },
+    });
+}
+
+export async function addNotes(token: string, eventId: number, content: string) {
+    return requestEvent(`/update/${eventId}`, {
+        method: "PATCH",
+        headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${token}` },
+        body: content,
+    });
+}

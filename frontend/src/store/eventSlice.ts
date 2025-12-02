@@ -8,7 +8,7 @@ export const eventSlice = createSlice({
     },
     reducers: {
         setEvents: (state, action) => {
-            state.events = action.payload;
+            state.events = [...action.payload];
         },
         addEvent: (state, action) => {
             state.events.push(action.payload);

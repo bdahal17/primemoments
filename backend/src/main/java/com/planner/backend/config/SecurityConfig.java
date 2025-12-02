@@ -50,7 +50,7 @@ public class SecurityConfig {
         // Allow specific origins (replace with your frontend URL, e.g., http://localhost:3000)
         configuration.setAllowedOrigins(Arrays.asList("http://localhost:5173", "http://dev-env.eba-fqsm8u3f.us-east-2.elasticbeanstalk.com"));
         // Allow specific HTTP methods
-        configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+        configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PATCH", "PUT", "DELETE", "OPTIONS"));
         // Allow specific headers (e.g., Authorization for JWT tokens)
         configuration.setAllowedHeaders(Arrays.asList("Authorization", "Content-Type"));
         // Allow credentials (e.g., cookies, Authorization headers) if needed

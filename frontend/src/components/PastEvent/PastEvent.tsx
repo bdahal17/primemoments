@@ -1,7 +1,7 @@
 import React, {useState} from "react";
 import type JSX from "react";
 import {Calendar, Clock, Info, MapPin, Users} from "lucide-react";
-import PastEventDetails from "./PastEventDetails.tsx";
+import EventDetails from "./EventDetails.tsx";
 
 interface PastEventProps {
     // Define any props if needed in the future
@@ -96,7 +96,7 @@ const PastEvent: React.FC<PastEventProps> = ({
                     </div>
                 ))}
                 {viewDetails && (
-                    <PastEventDetails
+                    <EventDetails
                         event={selectedEvent}
                         onBack={() => setViewDetails(false)}
                     />

@@ -1,20 +1,44 @@
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import {Calendar, Clock, Info, MapPin, Users} from "lucide-react";
+import EventDetails from "../../PastEvent/EventDetails.tsx";
+import {getEvents} from "../../../service/eventService.ts";
+import {setEvents} from "../../../store/eventSlice.ts";
+import {useAppDispatch, useAppSelector} from "../../../store/hooks.ts";
 
 interface PastEventProps {
     // Define any props if needed in the future
     viewDetails?: boolean;
     setViewDetails?: (value: boolean) => void;
     renderEventStatusBadge?: (status: string) => React.JSX.Element;
-    events?: any[]
 }
 
 const AdminEvents: React.FC<PastEventProps> = ({
                                                    viewDetails,
                                                    setViewDetails,
                                                    renderEventStatusBadge,
-                                                   events
                                                }) => {
+    const [selectedEvent, setSelectedEvent] = useState();
+    const dispatch = useAppDispatch();
+
+    const events = useAppSelector((state) => state.events.events);
+
+
+
+
+    useEffect( () => {
+        console.log("Fetching events for user...");
+        (async () => {
+            try {
+                const token = localStorage.getItem("jwt");
+                const allEvents = await getEvents(token);
+                dispatch(setEvents(allEvents));
+            } catch (error) {
+                console.error("Error fetching events:", error);
+            }
+        })();
+
+    }, []);
+
     return (
         <div className="w-full rounded-xl bg-white">
             {!viewDetails && events.map((event) => (
@@ -60,6 +84,7 @@ const AdminEvents: React.FC<PastEventProps> = ({
                         <button
                             className="text-sm text-white hover:text-gray-200 flex items-center bg-indigo-600"
                             onClick={() => {
+                                setSelectedEvent(event);
                                 setViewDetails(true)
                             }}
                         >
@@ -69,6 +94,9 @@ const AdminEvents: React.FC<PastEventProps> = ({
                     </div>
                 </div>
             ))}
+            {viewDetails && (
+                <EventDetails event={selectedEvent} onBack={() => setViewDetails(false)}/>
+            )}
         </div>
     );
 }

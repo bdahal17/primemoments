@@ -2,6 +2,7 @@ package com.planner.backend.controller;
 
 import com.planner.backend.DTO.EventDto;
 import com.planner.backend.DTO.response.EventResponse;
+import com.planner.backend.entity.EventNote;
 import com.planner.backend.service.EmailService;
 import com.planner.backend.service.EventService;
 import org.springframework.http.ResponseEntity;
@@ -43,5 +44,30 @@ public class EventController {
             return ResponseEntity.status(500).build();
         }
 
+    }
+
+    @PostMapping("/approve/{eventId}")
+    public ResponseEntity<?> approveEvent(Authentication authentication, @PathVariable Long eventId) {
+        try {
+            if(authentication.getAuthorities().stream().anyMatch(role -> role.getAuthority().equals("ADMIN"))) {
+                EventResponse eventResponse = eventService.approveEvent(eventId);
+                return ResponseEntity.ok(eventResponse);
+            }
+            return ResponseEntity.status(403).build();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(500).build();
+        }
+    }
+
+    @PatchMapping("/update/{eventId}")
+    public ResponseEntity<EventResponse> updateEvent(Authentication authentication, @PathVariable Long eventId, @RequestBody String content) {
+        try {
+            EventResponse eventResponse = eventService.updateEvent(authentication.getName(), eventId, content);
+            return ResponseEntity.ok(eventResponse);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(500).build();
+        }
     }
 }

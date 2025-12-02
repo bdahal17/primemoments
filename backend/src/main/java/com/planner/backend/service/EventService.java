@@ -1,11 +1,10 @@
 package com.planner.backend.service;
 
 import com.planner.backend.DTO.EventDto;
-import com.planner.backend.DTO.LocationDto;
+import com.planner.backend.DTO.EventNoteDto;
 import com.planner.backend.DTO.response.EventResponse;
 import com.planner.backend.DTO.response.LocationResponse;
 import com.planner.backend.entity.*;
-import com.planner.backend.repository.EventNoteRepository;
 import com.planner.backend.repository.EventRepository;
 import com.planner.backend.repository.LocationRepository;
 import com.planner.backend.repository.UserProfileRepository;
@@ -13,8 +12,8 @@ import org.apache.commons.mail.HtmlEmail;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
-import javax.mail.internet.InternetAddress;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 @Service
@@ -38,6 +37,34 @@ public class EventService {
     public List<EventResponse> getAllEvents() {
         List<Event> events = eventRepository.findAllByOrderByEventDateDesc().orElseThrow(() -> new RuntimeException("No events found"));
         return events.stream().map(this::convertToResponse).toList();
+    }
+
+    public EventResponse updateEvent(String username, Long eventId, String content) {
+        try {
+            UserProfile user = userProfileRepository.findUserProfileByEmail(username)
+                    .orElseThrow(() -> new RuntimeException("User not found"));
+
+            Event event = eventRepository.findById(eventId)
+                    .orElseThrow(() -> new RuntimeException("Event not found"));
+
+            if(!Objects.equals(event.getUserProfile().getEmail(), username)) {
+                throw new RuntimeException("Unauthorized to update this event");
+            }
+
+            EventNote note = EventNote.builder()
+                    .title("Update Note")
+                    .content(content)
+                    .userProfile(user)
+                    .event(event)
+                    .build();
+
+            event.getNotes().add(note);
+
+            return convertToResponse(eventRepository.save(event));
+
+        } catch (Exception e) {
+            throw new RuntimeException("Error updating event: " + e.getMessage());
+        }
     }
 
     public EventResponse createEvent(String username, EventDto eventDto) {
@@ -117,6 +144,14 @@ public class EventService {
         return events.stream().map(this::convertToResponse).toList();
     }
 
+    public EventResponse approveEvent(Long eventId) {
+        Event event = eventRepository.findById(eventId)
+                .orElseThrow(() -> new RuntimeException("Event not found"));
+        event.setStatus(EventStatus.CONFIRMED);
+
+        return convertToResponse(eventRepository.save(event));
+    };
+
     public EventResponse convertToResponse(Event event) {
         EventResponse eventResponse = new EventResponse();
         eventResponse.setStatus(event.getStatus());
@@ -124,6 +159,22 @@ public class EventService {
         eventResponse.setEventType(event.getEventType());
         eventResponse.setEventDate(event.getEventDate());
         eventResponse.setExpectedGuests(event.getExpectedGuests());
+        eventResponse.setContactName(event.getContactName());
+        eventResponse.setContactPhone(event.getContactNumber());
+        eventResponse.setCreatedBy(event.getUserProfile().getEmail());
+
+        List<EventNoteDto> noteDtos = event.getNotes().stream().map(note -> {
+            EventNoteDto noteDto = new EventNoteDto();
+            noteDto.setId(note.getId());
+            noteDto.setEventId(note.getEvent().getId());
+            noteDto.setTitle(note.getTitle());
+            noteDto.setContent(note.getContent());
+            noteDto.setCreatedAt(note.getCreatedAt());
+            noteDto.setUser(note.getUserProfile().getFirstName());
+            return noteDto;
+        }).toList();
+
+        eventResponse.setNoteDto(noteDtos);
 
         Optional<Location> locationOpt = locationRepository.findByEvent(event);
         locationOpt.ifPresent(location -> {
@@ -138,6 +189,7 @@ public class EventService {
             locationResponse.setPostalCode(location.getPostalCode());
             locationResponse.setCountry(location.getCountry());
             eventResponse.setLocation(locationResponse);
+            eventResponse.setVenueAddress(location.getAddressLine1());
         });
         return eventResponse;
     }

@@ -35,5 +35,10 @@ public class EventNote {
     @ManyToOne(fetch = FetchType.LAZY, optional = false) // optional: who wrote it
     @JoinColumn(name = "user_profile_id", nullable = false)
     private UserProfile userProfile;
+
+    @PrePersist
+    protected void prePersist() {
+        createdAt = LocalDateTime.now();
+    }
 }
 
