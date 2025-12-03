@@ -47,7 +47,7 @@ public class EventService {
             Event event = eventRepository.findById(eventId)
                     .orElseThrow(() -> new RuntimeException("Event not found"));
 
-            if(!Objects.equals(event.getUserProfile().getEmail(), username)) {
+            if(user.getRoles().stream().anyMatch(role -> role.getName().equals("USER")) && !Objects.equals(event.getUserProfile().getEmail(), username)) {
                 throw new RuntimeException("Unauthorized to update this event");
             }
 
