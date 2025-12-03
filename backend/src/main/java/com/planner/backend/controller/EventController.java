@@ -1,7 +1,9 @@
 package com.planner.backend.controller;
 
 import com.planner.backend.DTO.EventDto;
+import com.planner.backend.DTO.RatingDto;
 import com.planner.backend.DTO.response.EventResponse;
+import com.planner.backend.DTO.response.RatingResponse;
 import com.planner.backend.entity.EventNote;
 import com.planner.backend.service.EmailService;
 import com.planner.backend.service.EventService;
@@ -65,6 +67,17 @@ public class EventController {
         try {
             EventResponse eventResponse = eventService.updateEvent(authentication.getName(), eventId, content);
             return ResponseEntity.ok(eventResponse);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(500).build();
+        }
+    }
+
+    @PostMapping("/rate")
+    public ResponseEntity<RatingResponse> addRating(Authentication authentication, @RequestBody RatingDto rating) {
+        try {
+            RatingResponse ratingResponse = eventService.addRating(authentication.getName(), rating);
+            return ResponseEntity.ok(ratingResponse);
         } catch (Exception e) {
             e.printStackTrace();
             return ResponseEntity.status(500).build();

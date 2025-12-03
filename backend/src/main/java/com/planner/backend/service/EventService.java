@@ -2,16 +2,20 @@ package com.planner.backend.service;
 
 import com.planner.backend.DTO.EventDto;
 import com.planner.backend.DTO.EventNoteDto;
+import com.planner.backend.DTO.RatingDto;
 import com.planner.backend.DTO.response.EventResponse;
 import com.planner.backend.DTO.response.LocationResponse;
+import com.planner.backend.DTO.response.RatingResponse;
 import com.planner.backend.entity.*;
 import com.planner.backend.repository.EventRepository;
 import com.planner.backend.repository.LocationRepository;
+import com.planner.backend.repository.RatingRepository;
 import com.planner.backend.repository.UserProfileRepository;
 import org.apache.commons.mail.HtmlEmail;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -25,13 +29,16 @@ public class EventService {
     private final UserProfileRepository userProfileRepository;
     private final EventRepository eventRepository;
     private final LocationRepository locationRepository;
+    private final RatingRepository ratingRepository;
 
     public EventService(UserProfileRepository userProfileRepository,
                         EventRepository eventRepository,
-                        LocationRepository locationRepository) {
+                        LocationRepository locationRepository,
+                        RatingRepository ratingRepository) {
         this.userProfileRepository = userProfileRepository;
         this.eventRepository = eventRepository;
         this.locationRepository = locationRepository;
+        this.ratingRepository = ratingRepository;
     }
 
     public List<EventResponse> getAllEvents() {
@@ -64,6 +71,64 @@ public class EventService {
 
         } catch (Exception e) {
             throw new RuntimeException("Error updating event: " + e.getMessage());
+        }
+    }
+
+    public RatingResponse addRating(String username, RatingDto ratingDto) {
+        try {
+            UserProfile user = userProfileRepository.findUserProfileByEmail(username)
+                    .orElseThrow(() -> new RuntimeException("User not found"));
+
+            Event event = eventRepository.findById(ratingDto.getEventId())
+                    .orElseThrow(() -> new RuntimeException("Event not found"));
+
+            if (event.getStatus() != EventStatus.CONFIRMED) {
+                throw new RuntimeException("Cannot rate an event that is not completed");
+            }
+
+            if(!Objects.equals(event.getUserProfile(), user)) {
+                throw new RuntimeException("Unauthorized to rate this event");
+            }
+
+            Rating existingRating = ratingRepository.findByEventAndUserProfile(event, user).orElse(null);
+
+            Rating rating;
+
+            if (existingRating != null) {
+                // Update existing rating
+                existingRating.setRatingValue(ratingDto.getRating());
+                existingRating.setComment(ratingDto.getComment());
+                existingRating.setPublicComment(ratingDto.isPublicComment());
+                existingRating.setUpdatedAt(LocalDateTime.now());
+
+                rating = existingRating;
+
+            } else {
+                // Create new rating
+                rating = Rating.builder()
+                        .ratingValue(ratingDto.getRating())
+                        .comment(ratingDto.getComment())
+                        .publicComment(ratingDto.isPublicComment())
+                        .active(false)
+                        .userProfile(user)
+                        .event(event)
+                        .createdAt(LocalDateTime.now())
+                        .build();
+            }
+
+            ratingRepository.save(rating);
+
+            RatingResponse ratingResponse = new RatingResponse();
+            ratingResponse.setId(rating.getId());
+            ratingResponse.setScore(rating.getRatingValue());
+            ratingResponse.setComment(rating.getComment());
+            ratingResponse.setActive(rating.isActive());
+            ratingResponse.setPublicComment(rating.isPublicComment());
+
+            return ratingResponse;
+
+        } catch (Exception e) {
+            throw new RuntimeException("Error adding rating: " + e.getMessage());
         }
     }
 
@@ -191,6 +256,18 @@ public class EventService {
             eventResponse.setLocation(locationResponse);
             eventResponse.setVenueAddress(location.getAddressLine1());
         });
+
+        Optional<Rating> rating = ratingRepository.findByEvent(event);
+        rating.ifPresent(r -> {
+            RatingResponse ratingResponse = new RatingResponse();
+            ratingResponse.setId(r.getId());
+            ratingResponse.setScore(r.getRatingValue());
+            ratingResponse.setComment(r.getComment());
+            ratingResponse.setActive(r.isActive());
+            ratingResponse.setPublicComment(r.isPublicComment());
+            eventResponse.setRating(ratingResponse);
+        });
+
         return eventResponse;
     }
 

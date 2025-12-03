@@ -1,24 +1,64 @@
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
 import type JSX from "react";
-import {Calendar, Clock, Info, MapPin, Users} from "lucide-react";
+import {Calendar, Clock, Info, MapPin, MessageSquareText, Star, Users, UserStar} from "lucide-react";
 import EventDetails from "./EventDetails.tsx";
+import {useAppDispatch, useAppSelector} from "../../store/hooks.ts";
+import {addRating, approveEvent, getEvents} from "../../service/eventService.ts";
+import {setEvents} from "../../store/eventSlice.ts";
+import Modal from "../shared/Modal.tsx";
+import RatingModal from "../Rating/RatingModal.tsx";
 
 interface PastEventProps {
     // Define any props if needed in the future
     viewDetails?: boolean;
     setViewDetails?: (value: boolean) => void;
     renderEventStatusBadge?: (status: string) => React.JSX.Element;
-    events?: any[]
 }
 
 const PastEvent: React.FC<PastEventProps> = ({
                                                  viewDetails,
                                                  setViewDetails,
                                                  renderEventStatusBadge,
-                                                 events
 }) => {
 
     const [selectedEvent, setSelectedEvent] = useState();
+    const [seeMore, setSeeMore] = useState(false);
+    const user = useAppSelector((state) => state.user.userInfo);
+
+    const events = useAppSelector((state) => state.events.events);
+    const { userInfo } = useAppSelector((state) => state.user);
+    const dispatch = useAppDispatch();
+    const [addReview, setAddReview] = useState(false);
+
+
+
+
+    useEffect( () => {
+        console.log("Fetching events for user:", userInfo);
+        (async () => {
+            try {
+                const token = localStorage.getItem("jwt");
+                const events = await getEvents(token);
+                dispatch(setEvents(events));
+                console.log("Fetched events:", events);
+            } catch (error) {
+                console.error("Error fetching events:", error);
+            }
+        })();
+    }, []);
+
+    const handleRating = async (ratingData: { eventId: number, rating: number; comment: string }) => {
+        setSeeMore(false);
+        setAddReview(false);
+        try {
+            const token = localStorage.getItem("jwt");
+            await addRating(token, ratingData);
+            const allEvents = await getEvents(token);
+            dispatch(setEvents(allEvents));
+        } catch (error) {
+            console.error("Error approving event:", error);
+        }
+    }
 
     return events.length === 0 ? (
         <div className="w-full rounded-xl bg-white">
@@ -81,17 +121,81 @@ const PastEvent: React.FC<PastEventProps> = ({
                             </div>
                         </div>
                         {/* Optional: View Details Button */}
-                        <div className="mt-4 flex justify-end">
-                            <button
-                                className="text-sm text-white hover:text-gray-200 flex items-center bg-indigo-600"
-                                onClick={() => {
-                                    setSelectedEvent(event)
-                                    setViewDetails(true)
-                                }}
-                            >
-                                <Info className="mr-1.5 h-4 w-4"/>
-                                View Details
-                            </button>
+                        <div className="mt-4 flex flex-wrap justify-between mt-8">
+                            <div className={"flex flex-col items-start col-span-2 mb-5"}>
+                                <div className={"flex items-center mr-4"}>
+                                    <UserStar className="mr-2 h-5 w-5 text-gray-400"/>
+                                    {[1, 2, 3, 4, 5].map(item => {
+                                        return (
+                                            <Star
+                                                key={item}
+                                                className={`
+                                                        h-4 w-4
+                                                        ${event?.rating && item <= event?.rating?.score
+                                                    ? "fill-yellow-400 stroke-yellow-400"
+                                                    : "fill-transparent stroke-yellow-400"}
+                                                    `}
+                                            />
+                                        )
+                                    })}
+                                </div>
+                                <div className={"flex items-center"}>
+                                    <span>
+                                        {!seeMore && event?.rating?.comment.length > 50 ?
+                                        <span>{event?.rating?.comment?.substring(0, 50)}
+                                            <span onClick={
+                                                () => {
+                                                    setSeeMore(true)
+                                                }}
+                                                  className={"text-indigo-600 cursor-pointer ml-1"}
+                                            >
+                                                    see more...
+                                            </span>
+                                        </span>
+                                        :
+                                        <span>{event?.rating?.comment.length < 50 ? <span>{event?.rating?.comment}</span> :
+                                            <span>
+                                                {event?.rating?.comment ? <span>{event?.rating?.comment}
+                                                        <span onClick={
+                                                            () => {
+                                                                setSeeMore(false)
+                                                            }}
+                                                              className={"text-indigo-600 cursor-pointer ml-1"}
+                                                        >
+                                                        see less...
+                                                        </span>
+                                                    </span>: ""}
+                                            </span>}
+                                        </span>
+                                        }
+                                    </span>
+                                </div>
+                            </div>
+                            <div className={"flex"}>
+
+                                    <button
+                                        className={`text-sm text-white flex items-center ${event?.rating ? 'bg-indigo-600 hover:text-gray-200' : 'bg-gray-400'} mr-4 h-10 w-38`}
+                                        onClick={() => {
+                                            setSelectedEvent(event)
+                                            setAddReview(true)
+                                        }}
+                                        disabled={event?.status !== 'CONFIRMED'}
+                                    >
+                                        <Star className="mr-1.5 h-4 w-4"/>
+                                        {event?.rating ? 'Edit Review' : 'Add Review'}
+                                    </button>
+
+                                <button
+                                    className="text-sm text-white hover:text-gray-200 flex items-center bg-indigo-600 h-10 w-38"
+                                    onClick={() => {
+                                        setSelectedEvent(event)
+                                        setViewDetails(true)
+                                    }}
+                                >
+                                    <Info className="mr-1.5 h-4 w-4"/>
+                                    View Details
+                                </button>
+                            </div>
                         </div>
                     </div>
                 ))}
@@ -100,6 +204,10 @@ const PastEvent: React.FC<PastEventProps> = ({
                         event={selectedEvent}
                         onBack={() => setViewDetails(false)}
                     />
+                )}
+                {addReview && (
+                    <RatingModal event={selectedEvent} isOpen={addReview} onClose={() => setAddReview(false)}
+                                 onSubmit={handleRating}/>
                 )}
             </div>
         </div>

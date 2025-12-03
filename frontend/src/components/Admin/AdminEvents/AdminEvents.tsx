@@ -36,7 +36,6 @@ const AdminEvents: React.FC<PastEventProps> = ({
                 console.error("Error fetching events:", error);
             }
         })();
-
     }, []);
 
     return (

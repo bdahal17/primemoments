@@ -26,11 +26,9 @@ enum DashboardTab {
 }
 
 const Account: React.FC = () => {
-    const dispatch = useAppDispatch();
     const { userInfo } = useAppSelector((state) => state.user);
     const [activeTab, setActiveTab] = useState<DashboardTab>(DashboardTab.ScheduleEvent);
     const [isEventModalOpen, setIsEventModalOpen] = useState(false);
-    const events = useAppSelector((state) => state.events.events);
     const [contactFormSubmitted, setContactFormSubmitted] = useState(false);
     const [viewDetails, setViewDetails] = useState(false);
 
@@ -49,19 +47,7 @@ const Account: React.FC = () => {
         }));
     };
 
-    useEffect( () => {
-        console.log("Fetching events for user:", userInfo);
-        (async () => {
-            try {
-                const token = localStorage.getItem("jwt");
-                const events = await getEvents(token);
-                dispatch(setEvents(events));
-                console.log("Fetched events:", events);
-            } catch (error) {
-                console.error("Error fetching events:", error);
-            }
-        })();
-    }, []);
+
 
     const renderEventStatusBadge = (status: string) => {
         const statusColors = {
@@ -111,7 +97,6 @@ const Account: React.FC = () => {
                 ;
             case DashboardTab.PastEvents:
                 return <PastEvent
-                    events={events}
                     renderEventStatusBadge={renderEventStatusBadge}
                     setViewDetails={setViewDetails}
                     viewDetails={viewDetails}

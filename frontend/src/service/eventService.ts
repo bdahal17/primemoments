@@ -46,6 +46,17 @@ export async function approveEvent(token: string, eventId: number) {
     });
 }
 
+export async function addRating(token: string, ratingData: { eventId: number, rating: number; comment: string, publicComment?: boolean }) {
+    return requestEvent(`/rate`, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({...ratingData, publicComment: false}),
+    });
+}
+
 export async function addNotes(token: string, eventId: number, content: string) {
     return requestEvent(`/update/${eventId}`, {
         method: "PATCH",

@@ -3,6 +3,7 @@ package com.planner.backend.DTO.response;
 import com.planner.backend.DTO.EventNoteDto;
 import com.planner.backend.entity.EventStatus;
 import com.planner.backend.entity.Location;
+import com.planner.backend.entity.Rating;
 import lombok.Data;
 
 import java.time.LocalDateTime;
@@ -21,6 +22,7 @@ public class EventResponse {
     private String contactName;
     private List<EventNoteDto> noteDto;
     private LocationResponse location;
+    private RatingResponse rating;
 
     // Constructors, getters, setters
 }
